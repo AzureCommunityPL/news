@@ -1,22 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
-using System.Configuration;
-using System.Globalization;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Web;
-using news_functions;
 
-namespace NewsFunctions
+namespace news_functions.Handlers
 {
     public static class GetStorageConnection
     {
@@ -27,7 +21,7 @@ namespace NewsFunctions
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
-
+            log.LogInformation(EnvironmentHelper.GetEnv("WEBSITE_SITE_NAME"));
             var tableName = EnvironmentHelper.GetEnv("TableStorage-Name");
 
             var policy = new SharedAccessTablePolicy()
