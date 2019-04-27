@@ -20,5 +20,11 @@
         "properties": {
             "applicationId": "[parameters('appInsightsName')]"
         }
-    }]
+    }],
+    "outputs": {
+        "appInsightsName": {
+           "type": "string",
+           "value": "[parameters('appInsightsName')]"
+        }
+    }
 }
