@@ -16,8 +16,8 @@
                 "description": "Describes the name of the Storage Account resource"
             }
         },
-        "accessKey": {
-            "type": "string",
+        "storageAccountKey": {
+            "type": "securestring",
             "minLength": 1,
             "metadata": {
                 "description": "Storage Account Key"
@@ -37,7 +37,7 @@
             "displayName": "azureblob",
             "parameterValues": {
                 "accountName": "[parameters('storageAccountName')]",
-                "accessKey": "[parameters('accessKey')]"
+                "accessKey": "[parameters('storageAccountKey')]"
             }
         }
     }]
