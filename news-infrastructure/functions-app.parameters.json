@@ -7,6 +7,12 @@
         },
         "storageName": {
             "value": "devnewssa"
+        },
+        "appInsightsName": {
+            "value": "dev-news-ai"
+        },
+        "storageAccountKey": {
+            "value": null
         }
     }
 }
