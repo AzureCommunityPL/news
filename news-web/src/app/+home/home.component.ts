@@ -10,6 +10,6 @@ export class HomeComponent implements OnInit {
   constructor(private service: SasApiService) {}
 
   public ngOnInit(): void {
-    this.service.getSasToken().subscribe(x => console.log('sas response:', x))
+    this.service.getSasToken().subscribe(x => console.log('sas response:', x));
   }
 }
