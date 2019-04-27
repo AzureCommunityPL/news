@@ -10,9 +10,18 @@
         },
         "appInsightsName": {
             "type": "string"
+        },
+        "storageAccountKey": {
+            "type": "securestring",
+            "minLength": 1,
+            "metadata": {
+                "description": "Storage Account Key"
+            }
         }
     },
-    "variables": {},
+    "variables": {
+        "storageConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',parameters('storageAccountKey'))]"
+    },
     "resources": [
         {
             "apiVersion": "2016-03-01",
@@ -29,7 +38,7 @@
                         },
                         {
                             "name": "AzureWebJobsStorage",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]"
+                            "value": "[variables('storageConnectionString')]"
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -37,7 +46,7 @@
                         },
                         {
                             "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]"
+                            "value": "[variables('storageConnectionString')]"
                         },
                         {
                             "name": "WEBSITE_CONTENTSHARE",
@@ -57,7 +66,7 @@
                         },
                         {
                             "name": "AccountStorage-Conn",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]"
+                            "value": "[variables('storageConnectionString')]"
                         },
                         {
                             "name": "Queue-Name",
