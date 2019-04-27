@@ -14,15 +14,23 @@
     "variables": {
         "storageAccountType": "Standard_RAGRS"
     },
-    "resources": [{
-        "type": "Microsoft.Storage/storageAccounts",
-        "name": "[parameters('storageAccountName')]",
-        "location": "[resourceGroup().location]",
-        "apiVersion": "2018-07-01",
-        "sku": {
-            "name": "[variables('storageAccountType')]"
-        },
-        "kind": "StorageV2",
-        "properties": {}
-    }]
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[parameters('storageAccountName')]",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2018-07-01",
+            "sku": {
+                "name": "[variables('storageAccountType')]"
+            },
+            "kind": "StorageV2",
+            "properties": {}
+        }
+    ],
+    "outputs": {
+        "storageAccountName": {
+            "type": "string",
+            "value": "[parameters('storageAccountName')]"
+        }
+    }
 }
