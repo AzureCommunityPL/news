@@ -9,6 +9,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace news_functions.Handlers
 {
@@ -24,14 +25,21 @@ namespace news_functions.Handlers
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            if (req.Headers.TryGetValue("ACCESS_TOKEN",out var accessToken))
+            if (req.Headers.TryGetValue("access_token", out var accessToken))
             {
-                var fbAuth = await _httpClient.SendAsync(new HttpRequestMessage()
+                var fbAuthResponse = await _httpClient.SendAsync(new HttpRequestMessage()
                 {
                     RequestUri = new Uri($"https://{EnvironmentHelper.GetEnv("WEBSITE_SITE_NAME")}.azurewebsites.net/.auth/login/facebook"),
                     Method = HttpMethod.Post,
                     Headers = { { "X-ZUMO-AUTH", accessToken.ToString() } }
                 });
+
+                fbAuthResponse.EnsureSuccessStatusCode();
+                var content = await fbAuthResponse.Content.ReadAsStringAsync();
+
+                var fbAccessToken = JArray.Parse(content)[0]["access_token"].ToString();
+
+                //todo implement graph get userId
             }
             return new UnauthorizedResult();
         }
