@@ -1,0 +1,24 @@
+
+pr:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - news-functions/*
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+steps:
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: 'news-functions/*.csproj'
+    workingDirectory: '/news-functions'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: 'news-functions/*.csproj'
