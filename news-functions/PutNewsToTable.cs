@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
-using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
 
 namespace news_functions
@@ -41,12 +40,5 @@ namespace news_functions
         public string Url { get; set; }
         public string Summary { get; set; }
         public DateTime Date { get; set; }
-    }
-
-    public class NewsTable : TableEntity
-    {
-        public string Title { get; set; }
-        public string Url { get; set; }
-        public string Summary { get; set; }
     }
 }
