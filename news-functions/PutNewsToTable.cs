@@ -10,6 +10,7 @@ namespace news_functions
 {
     public static class PutNewsToTable
     {
+        // comment for build
         [FunctionName(nameof(PutNewsToTable))]
         public static async Task Run(
             [QueueTrigger("%Queue-Name%", Connection = "AccountStorage-Conn")]string item,
