@@ -1,0 +1,33 @@
+/* You can add global styles to this file, and also import other style files */
+$light: #f8f9fa;
+$light-background: #f8f9fa;
+$dark-background: #212529;
+
+header {
+    background: $light-background;
+    
+    img {
+        border-radius: 13px;
+        height: 26px;
+    }
+}
+
+footer {
+    background: $dark-background;
+    color: $light;
+
+    .tech-logo {
+        height: 32px;
+    }
+
+    .maugp-logo {
+        height: 128px;
+    }
+
+    li {
+        list-style:none;
+        background-image:none;
+        background-repeat:none;
+        background-position:0; 
+    }
+}
