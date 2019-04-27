@@ -77,11 +77,7 @@
                 "name": "[parameters('name')]",
                 "clientAffinityEnabled": false,
                 "reserved": false
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
-                "microsoft.insights/components/news-functions"
-            ]
+            }
         }
     ],
     "outputs": {}
