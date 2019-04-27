@@ -66,6 +66,7 @@ namespace NewsFunctions
                 }
 
             } while (continuationToken != null);
+
             return new OkObjectResult(new
             {
                 sasToken = sasToken,
