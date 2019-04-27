@@ -79,7 +79,7 @@
                             "runAfter": {},
                             "type": "ApiConnection",
                             "inputs": {
-                                "body": "{\ntitle:\"@{triggerBody()?['title']}\",\nurl:\"@{triggerBody()?['primaryLink']}\",\nsummary:\"@{triggerBody()?['summary']}\"\n}",
+                                "body": "{\nid:\"@{triggerBody()?['id']}\",\ndate:\"@{triggerBody()?['publishDate']}\",\ntitle:\"@{triggerBody()?['title']}\",\nurl:\"@{triggerBody()?['primaryLink']}\",\nsummary:\"@{triggerBody()?['summary']}\"\n}",
                                 "host": {
                                     "connection": {
                                         "name": "@parameters('$connections')['azurequeues']['connectionId']"
