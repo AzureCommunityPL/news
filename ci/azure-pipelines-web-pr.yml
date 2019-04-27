@@ -1,0 +1,35 @@
+
+pr:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - news-web/*
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+steps:
+
+- task: Npm@1
+  displayName: 'npm install'
+  inputs:
+    workingDir: 'news-web'
+    verbose: false
+
+- task: Npm@1
+  displayName: 'npm run lint'
+  inputs:
+    command: custom
+    workingDir: 'news-web'
+    verbose: false
+    customCommand: 'run lint'
+
+- task: Npm@1
+  displayName: 'npm run build'
+  inputs:
+    command: custom
+    workingDir: 'news-web'
+    verbose: false
+    customCommand: 'run build --prod'
