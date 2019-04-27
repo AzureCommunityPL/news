@@ -1,0 +1,60 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "logicAppName": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+                "description": "Describes the name of the Logic App resource"
+            }
+        }
+    },
+    "variables": {},
+    "resources": [{
+        "type": "Microsoft.Logic/workflows",
+        "apiVersion": "2016-06-01",
+        "name": "[parameters('logicAppName')]",
+        "location": "[resourceGroup().location]",
+        "dependsOn": [],
+        "properties": {
+            "definition": {
+                "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                "contentVersion": "1.0.0.0",
+                "parameters": {
+                    "$connections": {
+                        "defaultValue": {},
+                        "type": "Object"
+                    }
+                },
+                "triggers": {
+                    "When_a_feed_item_is_published": {
+                        "recurrence": {
+                            "frequency": "Minute",
+                            "interval": 10
+                        },
+                        "splitOn": "@triggerBody()?['value']",
+                        "type": "ApiConnection",
+                        "inputs": {
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['rss']['connectionId']"
+                                }
+                            },
+                            "method": "get",
+                            "path": "/OnNewFeed",
+                            "queries": {
+                                "feedUrl": "https://azurecomcdn.azureedge.net/en-us/blog/feed/"
+                            }
+                        }
+                    }
+                },
+                "actions": {},
+                "outputs": {}
+            },
+            "parameters": {
+                "$connections": {}
+            }
+        }
+    }]
+}
