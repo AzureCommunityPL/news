@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "queueApiConnectionName": {
+            "value": "azurequeues"
+        },
+        "storageAccountName": {
+            "value": "devnewssa"
+        },
+        "storageAccountKey": {
+            "value": "cJvGTiZ/p8WAXIeFpN/1JhoVHnH6JlWzUmwNa733Kk8rC/y1rygqnjlwTQHJjJ1LShjrDdxejsKGPnNjlpECRQ=="
+        },
+        "rssApiConnectionName": {
+            "value": "rss"
+        },
+        "logicAppName": {
+            "value": "dev-news-la-azure-blog"
+        },
+        "feedUrl": {
+            "value": "https://azurecomcdn.azureedge.net/en-us/blog/feed/"
+        }
+    }
+}
