@@ -1,4 +1,6 @@
 using System;
+using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
@@ -17,7 +19,7 @@ namespace news_functions
         {
             log.LogInformation($"C# Queue trigger function processed: {item}");
             var news = JsonConvert.DeserializeObject<News>(item);
-            var invertedTicks = $"{DateTime.MaxValue.Date.Ticks - DateTime.UtcNow.Date.Ticks:D19}";
+            var invertedTicks = $"{DateTime.MaxValue.ToUniversalTime().Date.Ticks - news.Date.ToUniversalTime().Date.Ticks:D19}";
 
             var table = new NewsTable
             {
@@ -34,10 +36,11 @@ namespace news_functions
 
     public class News
     {
+        public string Id { get; set; }
         public string Title { get; set; }
         public string Url { get; set; }
         public string Summary { get; set; }
-        public string Id { get; set; }
+        public DateTime Date { get; set; }
     }
 
     public class NewsTable : TableEntity
