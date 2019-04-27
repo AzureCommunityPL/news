@@ -33,7 +33,7 @@
             "value": "[parameters('storageAccountName')]"
         },
         "storageAccountKey": {
-            "type": "securestring",
+            "type": "string",
             "value": "[listKeys(parameters('storageAccountName'),'2018-11-01').key1]"
         }
     }
