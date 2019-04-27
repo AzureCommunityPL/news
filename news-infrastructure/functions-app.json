@@ -60,6 +60,10 @@
                         {
                             "name": "AccountStorage-Conn",
                             "value": "[variables('storageAccountConnectionString')]"
+                        },
+                        {
+                            "name": "Queue-Name",
+                            "value": "news"
                         }
                     ]
                 },
