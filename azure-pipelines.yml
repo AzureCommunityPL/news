@@ -17,3 +17,30 @@ steps:
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: 'news-functions/*.csproj'
+    workingDirectory: '/news-functions'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: 'news-functions/*.csproj'
+
+- task: DotNetCoreCLI@2
+  displayName: Publish
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: 'news-functions/*.csproj'
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+    zipAfterPublish: True
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+    ArtifactName: 'news-functions'
+  condition: succeededOrFailed()
