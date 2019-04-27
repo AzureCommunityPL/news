@@ -18,8 +18,8 @@ namespace NewsFunctions
     public static class GenerateSAS
     {
         [FunctionName(nameof(GenerateSAS))]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
+        public static IActionResult Run(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
             HttpRequest req,
             ILogger log)
         {
@@ -36,7 +36,6 @@ namespace NewsFunctions
             var storageAccount = CloudStorageAccount.Parse(GetEnv("AccountStorage-Conn"));
             var tableClient = storageAccount.CreateCloudTableClient() ?? throw new Exception(nameof(storageAccount.CreateCloudTableClient));            
             var table = tableClient.GetTableReference(tableName) ?? throw new Exception(nameof(tableClient.GetTableReference));
-            await table.CreateIfNotExistsAsync();
             
             var token = table.GetSharedAccessSignature(policy);
             
