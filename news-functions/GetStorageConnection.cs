@@ -15,11 +15,11 @@ using System.Web;
 
 namespace NewsFunctions
 {
-    public static class GenerateSAS
+    public static class GetStorageConnection
     {
-        [FunctionName(nameof(GenerateSAS))]
+        [FunctionName(nameof(GetStorageConnection))]
         public static IActionResult Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)]
             HttpRequest req,
             ILogger log)
         {
