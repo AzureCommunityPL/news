@@ -8,53 +8,107 @@
             "metadata": {
                 "description": "Describes the name of the Logic App resource"
             }
+        },
+		"feedUrl": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+                "description": "URL to RSS feed"
+            }
+        },
+        "rssApiConnectionName": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+                "description": "Describes the name of the RSS Api Connection resource"
+            }
+        },
+        "queueApiConnectionName": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+                "description": "Describes the name of the Qeueue Api Connection resource"
+            }
         }
     },
-    "variables": {},
-    "resources": [{
-        "type": "Microsoft.Logic/workflows",
-        "apiVersion": "2016-06-01",
-        "name": "[parameters('logicAppName')]",
-        "location": "[resourceGroup().location]",
-        "dependsOn": [],
-        "properties": {
-            "definition": {
-                "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-                "contentVersion": "1.0.0.0",
+    "variables": {
+		"rssConnectionId": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Web/connections/',parameters('rssApiConnectionName'))]",
+        "queueConnectionId":"[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Web/connections/',parameters('queueApiConnectionName'))]"
+	},
+    "resources": [
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('logicAppName')]",
+            "location": "westeurope",
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "When_a_feed_item_is_published": {
+                            "recurrence": {
+                                "frequency": "Minute",
+                                "interval": 10
+                            },
+                            "splitOn": "@triggerBody()?['value']",
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['rss']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "/OnNewFeed",
+                                "queries": {
+                                    "feedUrl": "[parameters('feedUrl')]"
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "Put_a_message_on_a_queue": {
+                            "runAfter": {},
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "body": "{\ntitle:\"@{triggerBody()?['title']}\",\nurl:\"@{triggerBody()?['primaryLink']}\",\nsummary:\"@{triggerBody()?['summary']}\"\n}",
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['azurequeues']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/@{encodeURIComponent('news')}/messages"
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
                 "parameters": {
                     "$connections": {
-                        "defaultValue": {},
-                        "type": "Object"
-                    }
-                },
-                "triggers": {
-                    "When_a_feed_item_is_published": {
-                        "recurrence": {
-                            "frequency": "Minute",
-                            "interval": 10
-                        },
-                        "splitOn": "@triggerBody()?['value']",
-                        "type": "ApiConnection",
-                        "inputs": {
-                            "host": {
-                                "connection": {
-                                    "name": "@parameters('$connections')['rss']['connectionId']"
-                                }
+                        "value": {
+                            "azurequeues": {
+                                "connectionId": "[variables('queueConnectionId')]",
+                                "connectionName": "azurequeues",
+                                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/westeurope/managedApis/azurequeues')]"
                             },
-                            "method": "get",
-                            "path": "/OnNewFeed",
-                            "queries": {
-                                "feedUrl": "https://azurecomcdn.azureedge.net/en-us/blog/feed/"
+                            "rss": {
+                                "connectionId": "[variables('rssConnectionId')]",
+                                "connectionName": "rss",
+                                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/westeurope/managedApis/rss')]"
                             }
                         }
                     }
-                },
-                "actions": {},
-                "outputs": {}
-            },
-            "parameters": {
-                "$connections": {}
+                }
             }
         }
-    }]
+    ]
 }
