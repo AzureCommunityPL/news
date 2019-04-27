@@ -12,6 +12,7 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
+using news_functions;
 
 namespace NewsFunctions
 {
@@ -25,7 +26,7 @@ namespace NewsFunctions
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            var tableName = GetEnv("TableStorage-Name");
+            var tableName = EnvironmentHelper.GetEnv("TableStorage-Name");
 
             var policy = new SharedAccessTablePolicy()
             {
@@ -33,7 +34,7 @@ namespace NewsFunctions
                 Permissions =  SharedAccessTablePermissions.Query
             };
 
-            var storageAccount = CloudStorageAccount.Parse(GetEnv("AccountStorage-Conn"));
+            var storageAccount = CloudStorageAccount.Parse(EnvironmentHelper.GetEnv("AccountStorage-Conn"));
             var tableClient = storageAccount.CreateCloudTableClient() ?? throw new Exception(nameof(storageAccount.CreateCloudTableClient));            
             var table = tableClient.GetTableReference(tableName) ?? throw new Exception(nameof(tableClient.GetTableReference));
             
@@ -44,16 +45,11 @@ namespace NewsFunctions
                 throw new NullReferenceException("Token is null");
             }
 
-            return (ActionResult)new OkObjectResult(new {
+            return new OkObjectResult(new {
                 sasToken =  token,
-                tableUri = table.Uri
+                storageAddress = $"{table.Uri.Scheme}://{table.Uri.Host}",
+                tableName = tableName,
             });
-        }
-
-        private static string GetEnv(string name)
-        {
-            return Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process)??
-                   throw new ArgumentException($"{nameof(name)}: {name}");
         }
     }    
 }
