@@ -11,7 +11,7 @@ import { FacebookService, FacebookUser } from './_shared/facebook';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  public title = 'Azure Aggregator';
+  public title = 'Azure community PL news aggregator';
 
   constructor(public service: FacebookService) {
   }
