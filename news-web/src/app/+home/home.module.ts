@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 
+import { NewsModule } from './news';
 import { HomeComponent } from './home.component';
 
 @NgModule({
@@ -7,6 +8,7 @@ import { HomeComponent } from './home.component';
     HomeComponent
   ],
   imports: [
+    NewsModule
   ],
   providers: []
 })

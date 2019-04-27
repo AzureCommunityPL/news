@@ -1,0 +1,26 @@
+<div class="container">
+    <div class="row news-item" *ngFor="let item of service.news | async">
+        <form>
+            <div class="form-group">
+                <h5>{{item.title}}</h5>
+            </div>
+            <div class="form-group">
+                <a href="item.url">link</a>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-user-plus"></i></button>
+        </form>
+    </div>
+</div>
+<!--<div class="container">
+    <div *ngFor="let item of service.news | async" class="row">
+        <div class="row">
+            <h3>{{item.title}}</h3>
+        </div>
+        <div class="row">
+                <a href="item.url">link</a>
+        </div>
+    </div>
+    <div *ngFor="let item of service.news | async" class="row mx-auto">
+        {{ item | json }}
+    </div>
+</div>-->
