@@ -12,9 +12,7 @@
             "type": "string"
         }
     },
-    "variables": {
-        "storageAccountConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]"
-    },
+    "variables": {},
     "resources": [
         {
             "apiVersion": "2016-03-01",
@@ -31,7 +29,7 @@
                         },
                         {
                             "name": "AzureWebJobsStorage",
-                            "value": "[variables('storageAccountConnectionString')]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]"
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -39,7 +37,7 @@
                         },
                         {
                             "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                            "value": "[variables('storageAccountConnectionString')]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]"
                         },
                         {
                             "name": "WEBSITE_CONTENTSHARE",
@@ -59,7 +57,7 @@
                         },
                         {
                             "name": "AccountStorage-Conn",
-                            "value": "[variables('storageAccountConnectionString')]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]"
                         }
                     ]
                 },
