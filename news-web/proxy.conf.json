@@ -1,0 +1,11 @@
+{
+        "/news-api/*": {
+            "target": "https://news-functions.azurewebsites.net",
+            "logLevel": "debug",
+            "secure": false,
+            "changeOrigin": true,
+            "pathRewrite": {
+                "^/news-api": ""
+            }
+        }
+    }

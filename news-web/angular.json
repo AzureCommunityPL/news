@@ -64,7 +64,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "azure-global-bootcamp:build"
+            "browserTarget": "azure-global-bootcamp:build",
+            "proxyConfig": "proxy.conf.json"
           },
           "configurations": {
             "production": {
