@@ -4,6 +4,9 @@
   "parameters": {
     "logicAppName": {
       "value": "dev-news-la-azure-blog"
+    },
+    "feedUrl": {
+      "value": "https://azurecomcdn.azureedge.net/en-us/blog/feed/"
     }
   }
 }
