@@ -1,4 +1,6 @@
 {
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
     "parameters": {
         "name": {
             "type": "string"
@@ -11,10 +13,13 @@
         }
     },
     "variables": {
-        "storageAccountConnectionString":"[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]"
+        "storageAccountConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]"
     },
     "resources": [
         {
+            "apiVersion": "2016-03-01",
+            "location": "[resourceGroup().location]",
+            "kind": "functionapp",
             "name": "[parameters('name')]",
             "type": "Microsoft.Web/sites",
             "properties": {
@@ -34,7 +39,7 @@
                         },
                         {
                             "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                            "value": 
+                            "value":
                         },
                         {
                             "name": "WEBSITE_CONTENTSHARE",
@@ -46,10 +51,10 @@
                         },
                         {
                             "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                            "value": "[reference(concat('microsoft.insights/components/', parameters(appInsightsName)), '2015-05-01').InstrumentationKey]"
+                            "value": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName')), '2015-05-01').InstrumentationKey]"
                         },
                         {
-                            "name":"TableStorage-Name",
+                            "name": "TableStorage-Name",
                             "value": "news"
                         },
                         {
@@ -65,12 +70,7 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
                 "microsoft.insights/components/news-functions"
-            ],
-            "apiVersion": "2016-03-01",
-            "location": "[resourceGroup().location]",
-            "kind": "functionapp"
+            ]
         }
-    ],
-    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0"
+    ]
 }
