@@ -37,7 +37,7 @@ namespace NewsFunctions
             var tableClient = storageAccount.CreateCloudTableClient() ?? throw new Exception(nameof(storageAccount.CreateCloudTableClient));
             var table = tableClient.GetTableReference(tableName) ?? throw new Exception(nameof(tableClient.GetTableReference));
             var token = table.GetSharedAccessSignature(policy);
-
+            
             if (string.IsNullOrEmpty(token))
             {
                 throw new NullReferenceException("Token is null");
@@ -46,7 +46,7 @@ namespace NewsFunctions
 
             return (ActionResult)new OkObjectResult(new {
                 sasToken =  token,
-                tableStorageName = tableName
+                tableUri = table.Uri
             });
         }
 
