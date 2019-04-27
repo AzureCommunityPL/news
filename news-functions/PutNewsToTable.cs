@@ -18,7 +18,7 @@ namespace news_functions
             ILogger log)
         {
             log.LogInformation($"C# Queue trigger function processed: {item}");
-            var news = JsonConvert.DeserializeObject<News>(item);           
+            var news = JsonConvert.DeserializeObject<News>(item);
             var invertedTicks = $"{DateTime.MaxValue.ToUniversalTime().Date.Ticks - news.Date.ToUniversalTime().Date.Ticks:D19}";
 
             var table = new NewsTable
