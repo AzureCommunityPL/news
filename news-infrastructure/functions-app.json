@@ -78,7 +78,20 @@
                 "clientAffinityEnabled": false,
                 "reserved": false
             }
-        }
+        },
+        {
+            "name": "[concat(parameters('name'), '/authsettings')]",
+            "apiVersion": "2016-08-01",
+            "type": "Microsoft.Web/sites/config",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+              "[resourceId('Microsoft.Web/sites', parameters('name'))]"
+            ],
+            "properties": {
+              "enabled": true,
+              "tokenStoreEnabled": true
+            }
+          }
     ],
     "outputs": {}
 }

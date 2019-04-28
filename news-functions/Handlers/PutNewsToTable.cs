@@ -1,12 +1,10 @@
 using System;
-using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace news_functions
+namespace news_functions.Handlers
 {
     public static class PutNewsToTable
     {
