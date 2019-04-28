@@ -1,44 +1,40 @@
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Injectable } from '@angular/core';
+
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { switchMap, map, tap, publishReplay, refCount } from 'rxjs/operators';
+
+import { ApiService } from '../../_shared/api';
+import { StorageODataService, ODataNewsResponseDto } from '../../_shared/storage-odata';
+
 import { NewsModel } from './news.model';
 
-const newsTitles: string[] = [
-    'news1',
-    'news2',
-    'news3',
-    'news4',
-    'news5',
-    'news6',
-    'news7',
-    'news8',
-    'news9',
-    'news10'
-];
-
-const news: NewsModel[] = newsTitles.map<NewsModel>(n => ({
-        title: n,
-        url: `http://news.com/${n}`,
-        partitioningKey: `${n}-PK`,
-        rowKey: `${n}-RK`,
-        lastModified: new Date(Date.now()),
-        comments: []
-}));
-// const news: NewsModel[] = newsTitles.map<NewsModel>(n => { return new {
-
-// };
-// });
-//     {
-//         title: 'News',
-//         url: '',
-//         partitioninKey: '',
-//         rowKey: '',
-//         lastModified: Date,
-//         comments: []
-//     }
-// ];
-
+@Injectable()
 export class NewsService {
-    public get news(): Observable<NewsModel[]> {
-        return this.newsSubject.asObservable();
+    public unsubscribe: Subject<void> = new Subject<void>();
+
+    constructor(
+        private api: ApiService,
+        private odata: StorageODataService) {
     }
-    private newsSubject = new BehaviorSubject<NewsModel[]>(news);
+
+    public getNews(): Observable<NewsModel[]> {
+        return this.api.getStorageConnection()
+            .pipe(
+                switchMap(x => this.odata.getNews(x)),
+                publishReplay(1),
+                refCount(),
+                map(x => this.mapAsNewsModel(x)));
+    }
+
+    private mapAsNewsModel(response: ODataNewsResponseDto): NewsModel[] {
+        return response.value.map<NewsModel>(x => ({
+            title: x.Title,
+            url: x.Url,
+            summary: x.Summary,
+            partitioningKey: x.PartitionKey,
+            rowKey: x.RowKey,
+            comments: [],   // unsupported yet
+            lastModified: new Date(x.TimeStamp)
+        }));
+    }
 }

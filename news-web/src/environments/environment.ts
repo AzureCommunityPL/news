@@ -5,10 +5,11 @@ import {Environment} from './environment.d';
 
 export const environment: Environment = {
   production: false,
+  local: true,
   fbAppId: '2251628364900121',
   fbApiVersion: 'v3.2',
-  sasApiAddress: '/news-api',
-  sasApiKey: ''
+  apiAddress: '/news-api',
+  apiKey: ''
 };
 
 /*
