@@ -23,25 +23,41 @@ namespace news_functions.Handlers
             ExecutionContext context,
             ILogger log)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
-
-            if (req.Headers.TryGetValue("access_token", out var accessToken))
+            try
             {
-                var fbAuthResponse = await _httpClient.SendAsync(new HttpRequestMessage()
+                log.LogInformation("C# HTTP trigger function processed a request.");
+
+                if (req.Headers.TryGetValue("access_token", out var accessToken))
                 {
-                    RequestUri = new Uri($"https://{EnvironmentHelper.GetEnv("WEBSITE_SITE_NAME")}.azurewebsites.net/.auth/login/facebook"),
-                    Method = HttpMethod.Post,
-                    Headers = { { "X-ZUMO-AUTH", accessToken.ToString() } }
-                });
+                    var url =
+                        $@"https://{EnvironmentHelper.GetEnv("WEBSITE_SITE_NAME")}.azurewebsites.net/.auth/login/facebook";
 
-                fbAuthResponse.EnsureSuccessStatusCode();
-                var content = await fbAuthResponse.Content.ReadAsStringAsync();
+                    log.LogInformation($"requesting to {url}");
+                    var fbAuthResponse = await _httpClient.SendAsync(new HttpRequestMessage()
+                    {
+                        RequestUri = new Uri(url),
+                        Method = HttpMethod.Post,
+                        Headers = {{"X-ZUMO-AUTH", accessToken.ToString()}}
+                    });
 
-                var fbAccessToken = JArray.Parse(content)[0]["access_token"].ToString();
+                    fbAuthResponse.EnsureSuccessStatusCode();
+                    var content = await fbAuthResponse.Content.ReadAsStringAsync();
 
-                //todo implement graph get userId
+                    var fbAccessToken = JArray.Parse(content)[0]["access_token"].ToString();
+
+                    log.LogInformation($"Token : {fbAccessToken}");
+                }
+
+                return new UnauthorizedResult();
             }
-            return new UnauthorizedResult();
+            catch (HttpRequestException ex) when(ex.Message.Contains("401"))
+            {
+                return new UnauthorizedResult();
+            }
+            catch (HttpRequestException ex) when (ex.Message.Contains("404"))
+            {
+                return new NotFoundResult();
+            }
         }
     }
 }
