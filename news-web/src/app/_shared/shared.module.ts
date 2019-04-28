@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { FacebookService, FacebookGraphApiService } from './facebook';
 import { CoreHttpClient } from './http';
-import { SasApiService } from './sas';
-
+import { ApiService } from './api';
+import { StorageODataService } from './storage-odata';
 
 @NgModule({
   imports: [
@@ -13,7 +13,10 @@ import { SasApiService } from './sas';
     FacebookService,
     FacebookGraphApiService,
     CoreHttpClient,
-    SasApiService
+    ApiService,
+    StorageODataService
   ],
+  exports: [
+  ]
 })
 export class SharedModule { }

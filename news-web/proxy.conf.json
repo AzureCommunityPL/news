@@ -1,11 +1,20 @@
 {
         "/news-api/*": {
-            "target": "https://news-functions.azurewebsites.net",
+            "target": "https://dev-news-functions.azurewebsites.net",
             "logLevel": "debug",
             "secure": false,
             "changeOrigin": true,
             "pathRewrite": {
                 "^/news-api": ""
+            }
+        },
+        "/news-storage/*": {
+            "target": "https://devnewssa.table.core.windows.net",
+            "logLevel": "debug",
+            "secure": false,
+            "changeOrigin": true,
+            "pathRewrite": {
+                "^/news-storage": ""
             }
         }
     }
