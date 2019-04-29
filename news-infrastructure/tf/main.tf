@@ -6,11 +6,11 @@ terraform {
   }
 }
 
-variable "facebookAppId" {
+variable "FACEBOOKAPPSECRET" {
   type = "string"
 }
 
-variable "facebookAppSecret" {
+variable "FACEBOOKAPPSECRET" {
   type = "string"
 }
 
@@ -92,8 +92,8 @@ resource "azurerm_template_deployment" "function-settings" {
 
   parameters {
     "name"              = "${azurerm_function_app.functions.name}"
-    "facebookAppId"     = "${var.facebookAppId}"
-    "facebookAppSecret" = "${var.facebookAppSecret}"
+    "facebookAppId"     = "${var.FACEBOOKAPPSECRET}"
+    "facebookAppSecret" = "${var.FACEBOOKAPPSECRET}"
   }
 
   depends_on = [
