@@ -3,7 +3,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { FacebookService, FacebookGraphApiService } from './facebook';
 import { CoreHttpClient } from './http';
 import { ApiService } from './api';
-import { StorageODataService } from './storage-odata';
+import { ODataClient } from './odata';
+import { StorageService } from './storage';
 
 @NgModule({
   imports: [
@@ -13,8 +14,9 @@ import { StorageODataService } from './storage-odata';
     FacebookService,
     FacebookGraphApiService,
     CoreHttpClient,
+    ODataClient,
     ApiService,
-    StorageODataService
+    StorageService
   ],
   exports: [
   ]
