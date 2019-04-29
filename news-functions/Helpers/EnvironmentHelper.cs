@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace news_functions
+namespace NewsFunctions.Helpers
 {
     internal static class EnvironmentHelper
     {
