@@ -29,7 +29,10 @@ export class FacebookService {
                     xfbml: true,
                     version: environment.fbApiVersion
                 });
-                FB.AppEvents.logPageView();
+
+                if (environment.production) {
+                    FB.AppEvents.logPageView();
+                }
                 this.initialized = true;
             };
         }
