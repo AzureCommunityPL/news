@@ -61,8 +61,12 @@
                             "value": "news"
                         },
                         {
-                            "name":"AccountStorage-Name",
+                            "name": "AccountStorage-Name",
                             "value": "[parameters('storageName')]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                            "value": "[variables('storageConnectionString')]"
                         }
                     ],
                     "connectionStrings": [
@@ -73,11 +77,6 @@
                         },
                         {
                             "name": "AzureWebJobsStorage",
-                            "type": "Custom",
-                            "connectionString": "[variables('storageConnectionString')]"
-                        },
-                        {
-                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
                             "type": "Custom",
                             "connectionString": "[variables('storageConnectionString')]"
                         }
@@ -94,13 +93,13 @@
             "type": "Microsoft.Web/sites/config",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-              "[resourceId('Microsoft.Web/sites', parameters('name'))]"
+                "[resourceId('Microsoft.Web/sites', parameters('name'))]"
             ],
             "properties": {
-              "enabled": true,
-              "tokenStoreEnabled": true
+                "enabled": true,
+                "tokenStoreEnabled": true
             }
-          }
+        }
     ],
     "outputs": {}
 }
