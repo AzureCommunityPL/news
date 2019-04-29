@@ -14,12 +14,12 @@ export class StorageService {
     constructor(private client: ODataClient) {
     }
 
-    public getNews(dto: StorageConnectionDto): Observable<NewsResponseDto> {
+    public getNews(dto: StorageConnectionDto, ticks: number): Observable<NewsResponseDto> {
         const filters: ODataFilter[] = [
             {
                 key: 'PartitionKey',
                 expression: ODataFilterExpression.Equals,
-                value: '2518458912000000000'
+                value: `${ticks}`
             }
         ];
         return this.client.get<NewsResponseDto>(this.getRequestUri(dto), filters, this.getHttpHeaders());
