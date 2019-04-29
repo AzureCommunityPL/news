@@ -6,9 +6,13 @@ terraform {
   }
 }
 
-variable "facebookAppId" {}
+variable "facebookAppId" {
+  type = "string"
+}
 
-variable "facebookAppSecret" {}
+variable "facebookAppSecret" {
+  type = "string"
+}
 
 provider "azurerm" {}
 
