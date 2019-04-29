@@ -6,27 +6,25 @@ import { Observable } from 'rxjs';
 import { CoreHttpClient } from '../http';
 import { environment } from '../../../environments/environment';
 
-import { SasDto } from './sas.dto';
+import { StorageConnectionDto } from './api.dto';
 
 @Injectable()
-export class SasApiService {
+export class ApiService {
     constructor(private client: CoreHttpClient) {
     }
 
-    public getSasToken(): Observable<SasDto> {
-        return this.client.get<SasDto>(
-            this.getRequestUri());
+    public getStorageConnection(): Observable<StorageConnectionDto> {
+        return this.client.get<StorageConnectionDto>(
+            this.getRequestUri(), this.getHttpHeaders());
     }
 
     private getRequestUri(): string {
-        return environment.sasApiKey
-            ? `${environment.sasApiAddress}/api/GenerateSAS?code=${environment.sasApiKey}`
-            : `${environment.sasApiAddress}/api/GenerateSAS`;
+        return `/api/GetStorageConnection`;
     }
 
     private getHttpHeaders(): HttpHeaders {
         const headers = new HttpHeaders()
-            .append('Content-Type', 'application/json');
+            .append('Accept', 'application/json');
 
         return headers;
     }

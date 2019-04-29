@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import { SharedModule } from '../../_shared';
+
 import { NewsComponent } from './news.component';
 import { NewsService } from './news.service';
 
@@ -9,7 +11,8 @@ import { NewsService } from './news.service';
         NewsComponent
     ],
     imports: [
-        CommonModule
+        CommonModule,
+        SharedModule
     ],
     providers: [
         NewsService

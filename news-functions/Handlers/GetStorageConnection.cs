@@ -1,33 +1,27 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
-using System.Configuration;
-using System.Globalization;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Web;
-using news_functions;
+using NewsFunctions.Helpers;
+using NewsFunctions.Models;
 
-namespace NewsFunctions
+namespace NewsFunctions.Handlers
 {
     public static class GetStorageConnection
     {
         [FunctionName(nameof(GetStorageConnection))]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)]
-            HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)]HttpRequest req,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
-
             var tableName = EnvironmentHelper.GetEnv("TableStorage-Name");
 
             var policy = new SharedAccessTablePolicy()
@@ -48,7 +42,6 @@ namespace NewsFunctions
             {
                 throw new NullReferenceException("Token is null");
             }
-
 
             var query = new TableQuery<NewsTable>().Select(new List<string>() { nameof(NewsTable.PartitionKey) });
 
@@ -75,16 +68,11 @@ namespace NewsFunctions
                 partitionKeys = list.Select(l => new
                 {
                     partitionKey = l,
-                    date = GetDateFromPartition(l)
+                    date = DateTimeHelper.GetDateFromPartition(l)
                 }).OrderByDescending(d => d.date)
             });
         }
 
-        private static DateTime GetDateFromPartition(string partitionKey)
-        {
-            var ticks = long.Parse(partitionKey);
-            var dateNowTicks = DateTime.MaxValue.Ticks - ticks;
-            return new DateTime(dateNowTicks).ToUniversalTime();
-        }
+        
     }
 }

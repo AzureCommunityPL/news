@@ -2,8 +2,9 @@ import {Environment} from './environment.d';
 
 export const environment: Environment = {
   production: true,
+  local: false,
   fbAppId: '#{Facebook.AppId}#',
   fbApiVersion: '#{Facebook.ApiVersion}#',
-  sasApiAddress: '#{Sas.Api.Address}#',
-  sasApiKey: '#{Sas.Api.Key}#'
+  apiAddress: '#{Api.Address}#',
+  apiKey: '#{Api.Key}#'
 };

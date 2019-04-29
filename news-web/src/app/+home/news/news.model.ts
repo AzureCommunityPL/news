@@ -1,5 +1,6 @@
 export interface NewsModel {
     title: string;
+    summary: string;
     url: string;
     partitioningKey: string;
     rowKey: string;
