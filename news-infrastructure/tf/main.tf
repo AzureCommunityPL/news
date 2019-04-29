@@ -106,7 +106,7 @@ resource "azurerm_template_deployment" "logicapp" {
   resource_group_name = "${azurerm_resource_group.rg.name}"
   deployment_mode     = "Incremental"
 
-  template_body = "${file("flogic-app.json")}"
+  template_body = "${file("logic-app.json")}"
 
   parameters {
     "queueApiConnectionName" = "azurequeues"
