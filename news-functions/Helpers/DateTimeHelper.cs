@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace news_functions.Helpers
+namespace NewsFunctions.Helpers
 {
     public static class DateTimeHelper
     {

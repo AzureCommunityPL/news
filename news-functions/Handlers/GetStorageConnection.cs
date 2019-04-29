@@ -9,10 +9,10 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
-using news_functions.Helpers;
-using news_functions.Models;
+using NewsFunctions.Helpers;
+using NewsFunctions.Models;
 
-namespace news_functions.Handlers
+namespace NewsFunctions.Handlers
 {
     public static class GetStorageConnection
     {

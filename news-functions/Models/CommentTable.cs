@@ -1,6 +1,6 @@
 using Microsoft.WindowsAzure.Storage.Table;
 
-namespace news_functions.Models
+namespace NewsFunctions.Models
 {
     public class CommentTable : TableEntity
     {

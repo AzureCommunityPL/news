@@ -1,6 +1,6 @@
 using System;
 
-namespace news_functions.Models
+namespace NewsFunctions.Models
 {
     public class CommentDto
     {

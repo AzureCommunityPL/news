@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Net.Http;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -10,12 +9,11 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Table;
-using news_functions.Helpers;
-using news_functions.Models;
+using NewsFunctions.Helpers;
+using NewsFunctions.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
-namespace news_functions.Handlers
+namespace NewsFunctions.Handlers
 {
     public static class PostComment
     {

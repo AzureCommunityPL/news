@@ -1,4 +1,4 @@
-namespace news_functions.Models
+namespace NewsFunctions.Models
 {
     public class FacebookProfileDto
     {
