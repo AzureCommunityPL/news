@@ -9,12 +9,9 @@
     },
     "Storage": {
       "matchCondition": {
-        "route": "/storage"
+        "route": "/storage/{*restOfPath}"
       },
-      "backendUri": "https://%AccountStorage-Name%.table.core.windows.net/%TableStorage-Name%",
-      "requestOverrides": {
-        "backend.request.headers.Content-Type": "application/json"
-      }
+      "backendUri": "https://%AccountStorage-Name%.table.core.windows.net/{*restOfPath}"
     },
     "SPA": {
       "matchCondition": {
