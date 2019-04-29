@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 import { CoreHttpClient } from '../http';
 
-import { ODataFilter, ODataFilterMap } from './odata.model';
+import { ODataFilter, ODataFilterMap } from './odata.models';
 
 @Injectable()
 export class ODataClient {

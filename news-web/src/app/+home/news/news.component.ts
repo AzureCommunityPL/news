@@ -17,7 +17,6 @@ export class NewsComponent implements OnInit, OnDestroy {
     private unsubscribe: Subject<void> = new Subject<void>();
 
     constructor(private service: NewsService) {
-      // this.service.newNews().subscribe(x => console.log('newNews: ', x));
     }
 
     public ngOnInit(): void {
