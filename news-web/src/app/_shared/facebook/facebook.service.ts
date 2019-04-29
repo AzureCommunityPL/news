@@ -58,8 +58,7 @@ export class FacebookService {
         this.userSubject
             .pipe(
                 switchMap((user) => this.service.get<PictureResponse>(`/${user.id}/picture?redirect=false`, user)),
-                map((response: PictureResponse) => new FacebookUserPicture(response)),
-                tap(x => console.log('user:', x)))
+                map((response: PictureResponse) => new FacebookUserPicture(response)))
             .subscribe(this.userPictureSubject);
 
         this.user = this.userSubject
