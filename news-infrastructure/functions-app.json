@@ -62,7 +62,7 @@
                         },
                         {
                             "name":"AccountStorage-Name",
-                            "value": "devnewssa"
+                            "value": "[parameters('storageName')]"
                         }
                     ],
                     "connectionStrings": [
