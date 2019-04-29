@@ -1,21 +1,21 @@
 {
   "$schema": "http://json.schemastore.org/proxies",
   "proxies": {
-    "API": {
+    "api": {
       "matchCondition": {
         "route": "/api/{*restOfPath}"
       },
       "backendUri": "https://%WEBSITE_SITE_NAME%.azurewebsites.net/api/{restOfPath}",
       "debug": true
     },
-    "Storage": {
+    "appResources": {
       "matchCondition": {
         "route": "/storage/{*restOfPath}"
       },
       "backendUri": "https://%AccountStorage-Name%.table.core.windows.net/{*restOfPath}",
       "debug": true
     },
-    "SPA": {
+    "app": {
       "matchCondition": {
         "route": "{*restOfPath}"
       },
