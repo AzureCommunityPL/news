@@ -29,23 +29,30 @@ namespace news_functions.Handlers
 
                 if (req.Headers.TryGetValue("access_token", out var accessToken))
                 {
-                    var url =
-                        $@"https://{EnvironmentHelper.GetEnv("WEBSITE_SITE_NAME")}.azurewebsites.net/.auth/login/facebook";
+                    _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken.ToString()}");
 
-                    log.LogInformation($"requesting to {url}");
-                    var fbAuthResponse = await _httpClient.SendAsync(new HttpRequestMessage()
-                    {
-                        RequestUri = new Uri(url),
-                        Method = HttpMethod.Post,
-                        Headers = {{"X-ZUMO-AUTH", accessToken.ToString()}}
-                    });
+                    //var graphResponse = await _httpClient.GetAsync("https://graph.facebook.com/v2.11/me?fields=first_name,last_name,picture");
+                    //var graphContent = await graphResponse.Content.ReadAsStringAsync();
 
-                    fbAuthResponse.EnsureSuccessStatusCode();
-                    var content = await fbAuthResponse.Content.ReadAsStringAsync();
+                    //var url =
+                    //    $@"https://{EnvironmentHelper.GetEnv("WEBSITE_SITE_NAME")}.azurewebsites.net/.auth/login/facebook";
 
-                    var fbAccessToken = JArray.Parse(content)[0]["access_token"].ToString();
+                    //log.LogInformation($"requesting to {url}");
+                    //var fbAuthResponse = await _httpClient.SendAsync(new HttpRequestMessage()
+                    //{
+                    //    RequestUri = new Uri(url),
+                    //    Method = HttpMethod.Post,
+                    //    Headers = {{"X-ZUMO-AUTH", accessToken.ToString()}}
+                    //});
 
-                    log.LogInformation($"Token : {fbAccessToken}");
+                    //fbAuthResponse.EnsureSuccessStatusCode();
+                    //var content = await fbAuthResponse.Content.ReadAsStringAsync();
+
+                    //var fbAccessToken = JArray.Parse(content)[0]["access_token"].ToString();
+
+                    //log.LogInformation($"Token : {fbAccessToken}");
+
+
                 }
 
                 return new UnauthorizedResult();
