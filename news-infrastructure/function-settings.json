@@ -1,0 +1,45 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "string"
+        },
+        "facebookAppId": {
+            "type": "string"
+        },
+        "facebookAppSecret": {
+            "type": "securestring"
+        }
+    },
+    "resources": [
+        {
+            "name": "[concat(parameters('name'), '/authsettings')]",
+            "apiVersion": "2016-08-01",
+            "type": "Microsoft.Web/sites/config",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "enabled": true,
+                "tokenStoreEnabled": true,
+                "facebookAppId": "[parameters('facebookAppId')]",
+                "facebookAppSecret": "[parameters('facebookAppSecret')]",
+                "facebookOAuthScopes": [
+                    "public_profile"
+                ]
+            }
+        },
+        {
+            "comments": "CORS allow origins *.",
+            "type": "Microsoft.Web/sites/config",
+            "name": "[concat(parameters('name'), '/web')]",
+            "apiVersion": "2016-08-01",
+            "properties": {
+                "cors": {
+                    "allowedOrigins": [
+                        "*"
+                    ]
+                }
+            }
+        }
+    ]
+}
