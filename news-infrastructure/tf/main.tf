@@ -60,9 +60,16 @@ resource "azurerm_function_app" "functions" {
   app_service_plan_id       = "${azurerm_app_service_plan.functions.id}"
   storage_connection_string = "${azurerm_storage_account.storage.primary_connection_string}"
 
+  connection_string = [
+    {
+      name  = "AccountStorage-Conn"
+      type  = "Custom"
+      value = "${azurerm_storage_account.storage.primary_connection_string}"
+    },
+  ]
+
   app_settings = {
     "TableStorage-Name"              = "${azurerm_storage_table.news.name}"
-    "AccountStorage-Conn"            = "${azurerm_storage_account.storage.primary_connection_string}"
     "Queue-Name"                     = "${azurerm_storage_queue.news.name}"
     "APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.appinsights.instrumentation_key}"
   }
