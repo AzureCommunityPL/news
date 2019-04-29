@@ -1,4 +1,12 @@
 <div class="container">
+    <div class="row top-pager">
+        <form>
+            <div class="form-group">
+                <input name="datepicker" [(ngModel)]="date"
+                    type="text" placeholder="Datepicker" class="form-control" bsDatepicker>
+            </div>
+        </form>
+    </div>
     <div class="row news-item" *ngFor="let item of news">
         <form>
             <div class="form-group">
@@ -8,7 +16,9 @@
             <div class="form-group">
                 <a [href]="item.url">link</a>
             </div>
-            <button type="submit" class="btn btn-primary"><i class="fa fa-user-plus"></i></button>
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-user-plus"></i>
+            </button>
         </form>
     </div>
 </div>

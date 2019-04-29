@@ -19,9 +19,7 @@ export class ApiService {
     }
 
     private getRequestUri(): string {
-        return environment.local
-            ? `${environment.apiAddress}/api/GetStorageConnection`
-            : `${environment.apiAddress}/api/GetStorageConnection?code=${environment.apiKey}`;
+        return `/api/GetStorageConnection`;
     }
 
     private getHttpHeaders(): HttpHeaders {
