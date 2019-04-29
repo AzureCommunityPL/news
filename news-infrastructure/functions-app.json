@@ -37,16 +37,8 @@
                             "value": "dotnet"
                         },
                         {
-                            "name": "AzureWebJobsStorage",
-                            "value": "[variables('storageConnectionString')]"
-                        },
-                        {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
                             "value": "~2"
-                        },
-                        {
-                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                            "value": "[variables('storageConnectionString')]"
                         },
                         {
                             "name": "WEBSITE_CONTENTSHARE",
@@ -76,6 +68,16 @@
                     "connectionStrings": [
                         {
                             "name": "AccountStorage-Conn",
+                            "type": "Custom",
+                            "connectionString": "[variables('storageConnectionString')]"
+                        },
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "type": "Custom",
+                            "connectionString": "[variables('storageConnectionString')]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
                             "type": "Custom",
                             "connectionString": "[variables('storageConnectionString')]"
                         }
