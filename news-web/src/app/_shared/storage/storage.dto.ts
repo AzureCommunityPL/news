@@ -1,5 +1,5 @@
 
-export interface ODataNewsDto {
+export interface NewsDto {
     'odata.etag': string;
     PartitionKey: string;
     RowKey: string;
@@ -9,7 +9,7 @@ export interface ODataNewsDto {
     Url: string;
 }
 
-export interface ODataNewsResponseDto {
+export interface NewsResponseDto {
     'odata.metadata': string;
-    value: ODataNewsDto[];
+    value: NewsDto[];
 }

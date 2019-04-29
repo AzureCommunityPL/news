@@ -4,7 +4,7 @@ import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { switchMap, map, tap, publishReplay, refCount } from 'rxjs/operators';
 
 import { ApiService } from '../../_shared/api';
-import { StorageODataService, ODataNewsResponseDto } from '../../_shared/storage-odata';
+import { StorageService, NewsResponseDto } from '../../_shared/storage';
 
 import { NewsModel } from './news.model';
 
@@ -14,7 +14,7 @@ export class NewsService {
 
     constructor(
         private api: ApiService,
-        private odata: StorageODataService) {
+        private odata: StorageService) {
     }
 
     public getNews(): Observable<NewsModel[]> {
@@ -26,7 +26,7 @@ export class NewsService {
                 map(x => this.mapAsNewsModel(x)));
     }
 
-    private mapAsNewsModel(response: ODataNewsResponseDto): NewsModel[] {
+    private mapAsNewsModel(response: NewsResponseDto): NewsModel[] {
         return response.value.map<NewsModel>(x => ({
             title: x.Title,
             url: x.Url,

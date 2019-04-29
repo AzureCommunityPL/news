@@ -60,7 +60,7 @@ export class FacebookService {
             .subscribe(this.userPictureSubject);
 
         this.user = this.userSubject
-                .asObservable();
+            .asObservable();
 
         this.userPicture = this.userPictureSubject
             .asObservable();

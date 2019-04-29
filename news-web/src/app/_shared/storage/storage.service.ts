@@ -3,25 +3,33 @@ import { HttpHeaders } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
-import { CoreHttpClient } from '../http';
+import { ODataClient, ODataFilter, ODataFilterExpression } from '../odata';
 import { environment } from '../../../environments/environment';
 
 import { StorageConnectionDto } from '../api';
-import { ODataNewsResponseDto } from './storage-odata.dto';
+import { NewsResponseDto } from './storage.dto';
 
 @Injectable()
-export class StorageODataService {
-    constructor(private client: CoreHttpClient) {
+export class StorageService {
+    constructor(private client: ODataClient) {
     }
 
-    public getNews(dto: StorageConnectionDto): Observable<ODataNewsResponseDto> {
-        return this.client.get<ODataNewsResponseDto>(this.getRequestUri(dto), this.getHttpHeaders());
+    public getNews(dto: StorageConnectionDto): Observable<NewsResponseDto> {
+        const filters: ODataFilter[] = [
+            {
+                key: 'PartitionKey',
+                expression: ODataFilterExpression.Equals,
+                value: '2518458912000000000'
+            }
+        ];
+        return this.client.get<NewsResponseDto>(this.getRequestUri(dto), filters, this.getHttpHeaders());
     }
 
+    // $filter=PartitionKey%20eq%20'2518458912000000000'&
     // https://devnewssa.table.core.windows.net/news()?{sas-token}&$filter=PartitionKey%20eq%20'2518458912000000000'
     private getRequestUri(dto: StorageConnectionDto): string {
         return environment.local
-            ? `/news-storage/${dto.tableName}()${dto.sasToken}&$filter=PartitionKey%20eq%20'2518458912000000000'&$top=10`
+            ? `/news-storage/${dto.tableName}()${dto.sasToken}&$top=10`
             : `${dto.storageAddress}/${dto.tableName}()${dto.sasToken}&$top=10`;
     }
 
