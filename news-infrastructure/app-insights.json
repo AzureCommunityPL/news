@@ -11,20 +11,22 @@
         }
     },
     "variables": {},
-    "resources": [{
-        "apiVersion": "2014-04-01",
-        "name": "[parameters('appInsightsName')]",
-        "type": "Microsoft.Insights/components",
-        "location": "[resourceGroup().location]",
-        "tags": {},
-        "properties": {
-            "applicationId": "[parameters('appInsightsName')]"
+    "resources": [
+        {
+            "apiVersion": "2014-04-01",
+            "name": "[parameters('appInsightsName')]",
+            "type": "Microsoft.Insights/components",
+            "location": "[resourceGroup().location]",
+            "tags": {},
+            "properties": {
+                "applicationId": "[parameters('appInsightsName')]"
+            }
         }
-    }],
+    ],
     "outputs": {
         "appInsightsName": {
-           "type": "string",
-           "value": "[parameters('appInsightsName')]"
+            "type": "string",
+            "value": "[parameters('appInsightsName')]"
         }
     }
 }
