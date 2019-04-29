@@ -16,12 +16,10 @@ namespace news_functions.Handlers
     {
         [FunctionName(nameof(GetStorageConnection))]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)]
-            HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)]HttpRequest req,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
-            log.LogInformation(EnvironmentHelper.GetEnv("WEBSITE_SITE_NAME"));
             var tableName = EnvironmentHelper.GetEnv("TableStorage-Name");
 
             var policy = new SharedAccessTablePolicy()
@@ -42,7 +40,6 @@ namespace news_functions.Handlers
             {
                 throw new NullReferenceException("Token is null");
             }
-
 
             var query = new TableQuery<NewsTable>().Select(new List<string>() { nameof(NewsTable.PartitionKey) });
 

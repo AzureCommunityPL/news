@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json.schemastore.org/proxies",
+  "proxies": {
+    "API": {
+      "matchCondition": {
+        "route": "/api1/{*restOfPath}"
+      },
+      "backendUri": "https://%WEBSITE_SITE_NAME%.azurewebsites.net/api/{restOfPath}"
+    },
+    "Storage": {
+      "matchCondition": {
+        "route": "/storage",
+        "methods": [
+          "GET"
+        ]
+      },
+      "backendUri": "https://%AccountStorage-Name%.table.core.windows.net/%TableStorage-Name%",
+      "requestOverrides": {
+        "backend.request.method": "get",
+        "backend.request.headers.Content-Type": "application/json"
+      }
+    }
+  }
+}

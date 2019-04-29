@@ -65,12 +65,19 @@
                             "value": "news"
                         },
                         {
-                            "name": "AccountStorage-Conn",
-                            "value": "[variables('storageConnectionString')]"
-                        },
-                        {
                             "name": "Queue-Name",
                             "value": "news"
+                        },
+                        {
+                            "name":"AccountStorage-Name",
+                            "value": "devnewssa"
+                        }
+                    ],
+                    "connectionStrings": [
+                        {
+                            "name": "AccountStorage-Conn",
+                            "type": "Custom",
+                            "connectionString": "[variables('storageConnectionString')]"
                         }
                     ]
                 },
