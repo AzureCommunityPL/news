@@ -12,7 +12,7 @@
       "matchCondition": {
         "route": "/storage/{*restOfPath}"
       },
-      "backendUri": "https://%AccountStorage-Name%.table.core.windows.net/{*restOfPath}",
+      "backendUri": "https://%AccountStorage-Name%.table.core.windows.net/{restOfPath}",
       "debug": true
     },
     "app": {
