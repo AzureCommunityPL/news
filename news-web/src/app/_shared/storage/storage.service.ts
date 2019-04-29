@@ -3,12 +3,11 @@ import { HttpHeaders } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
-import { ODataClient, ODataFilterExpression } from '../odata';
+import { ODataClient, ODataFilter, ODataFilterExpression } from '../odata';
 import { environment } from '../../../environments/environment';
 
 import { StorageConnectionDto } from '../api';
 import { NewsResponseDto } from './storage.dto';
-import { ODataFilter } from 'src/app/_shared/odata/odata.model';
 
 @Injectable()
 export class StorageService {
