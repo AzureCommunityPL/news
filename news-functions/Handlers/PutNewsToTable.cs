@@ -1,7 +1,8 @@
-using System;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
+using news_functions.Helpers;
+using news_functions.Models;
 using Newtonsoft.Json;
 
 namespace news_functions.Handlers
@@ -16,7 +17,7 @@ namespace news_functions.Handlers
         {
             log.LogInformation($"C# Queue trigger function processed: {item}");
             var news = JsonConvert.DeserializeObject<News>(item);
-            var invertedTicks = $"{DateTime.MaxValue.ToUniversalTime().Date.Ticks - news.Date.ToUniversalTime().Date.Ticks:D19}";
+            var invertedTicks = DateTimeHelper.InvertTicks(news.Date);
 
             var table = new NewsTable
             {
@@ -29,14 +30,5 @@ namespace news_functions.Handlers
             };
             await collector.AddAsync(table);
         }
-    }
-
-    public class News
-    {
-        public string Id { get; set; }
-        public string Title { get; set; }
-        public string Url { get; set; }
-        public string Summary { get; set; }
-        public DateTime Date { get; set; }
     }
 }

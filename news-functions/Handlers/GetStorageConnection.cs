@@ -9,6 +9,8 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
+using news_functions.Helpers;
+using news_functions.Models;
 
 namespace news_functions.Handlers
 {
@@ -66,16 +68,11 @@ namespace news_functions.Handlers
                 partitionKeys = list.Select(l => new
                 {
                     partitionKey = l,
-                    date = GetDateFromPartition(l)
+                    date = DateTimeHelper.GetDateFromPartition(l)
                 }).OrderByDescending(d => d.date)
             });
         }
 
-        private static DateTime GetDateFromPartition(string partitionKey)
-        {
-            var ticks = long.Parse(partitionKey);
-            var dateNowTicks = DateTime.MaxValue.Ticks - ticks;
-            return new DateTime(dateNowTicks).ToUniversalTime();
-        }
+        
     }
 }

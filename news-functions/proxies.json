@@ -3,7 +3,7 @@
   "proxies": {
     "API": {
       "matchCondition": {
-        "route": "/api/{*restOfPath}"
+        "route": "/api1/{*restOfPath}"
       },
       "backendUri": "https://%WEBSITE_SITE_NAME%.azurewebsites.net/api/{restOfPath}"
     },
