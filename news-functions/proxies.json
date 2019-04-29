@@ -5,19 +5,22 @@
       "matchCondition": {
         "route": "/api/{*restOfPath}"
       },
-      "backendUri": "https://%WEBSITE_SITE_NAME%.azurewebsites.net/api/{restOfPath}"
+      "backendUri": "https://%WEBSITE_SITE_NAME%.azurewebsites.net/api/{restOfPath}",
+      "debug": true
     },
     "Storage": {
       "matchCondition": {
         "route": "/storage/{*restOfPath}"
       },
-      "backendUri": "https://%AccountStorage-Name%.table.core.windows.net/{*restOfPath}"
+      "backendUri": "https://%AccountStorage-Name%.table.core.windows.net/{*restOfPath}",
+      "debug": true
     },
     "SPA": {
       "matchCondition": {
         "route": "{*restOfPath}"
       },
-      "backendUri": "https://%AccountStorage-Name%.z6.web.core.windows.net/{restOfPath}"
+      "backendUri": "https://%AccountStorage-Name%.z6.web.core.windows.net/{restOfPath}",
+      "debug": true
     }
   }
 }
