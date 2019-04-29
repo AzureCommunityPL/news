@@ -62,9 +62,7 @@
                     "id": "[concat(subscription().id,'/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/azurequeues')]"
                 },
                 "displayName": "azurequeues",
-                "nonSecretParameterValues" : {
-                    
-                },
+                "nonSecretParameterValues": {},
                 "parameterValues": {
                     "storageaccount": "[parameters('storageAccountName')]",
                     "sharedkey": "[parameters('storageAccountKey')]"
