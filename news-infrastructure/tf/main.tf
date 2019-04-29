@@ -100,3 +100,24 @@ resource "azurerm_template_deployment" "function-settings" {
     "azurerm_function_app.functions",
   ]
 }
+
+resource "azurerm_template_deployment" "logicapp" {
+  name                = "function-settings"
+  resource_group_name = "${azurerm_resource_group.rg.name}"
+  deployment_mode     = "Incremental"
+
+  template_body = "${file("function-settings.json")}"
+
+  parameters {
+    "queueApiConnectionName" = "azurequeues"
+    "storageAccountName"     = "${azurerm_storage_account.storage.name}"
+    "storageAccountKey"      = "${azurerm_storage_account.storage.primary_access_key}"
+    "rssApiConnectionName"   = "rss"
+    "logicAppName"           = "${terraform.workspace}-news-la-azure-blog"
+    "feedUrl"                = "https://azurecomcdn.azureedge.net/en-us/blog/feed/"
+  }
+
+  depends_on = [
+    "azurerm_storage_queue.news",
+  ]
+}
