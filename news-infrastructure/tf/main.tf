@@ -6,6 +6,10 @@ terraform {
   }
 }
 
+variable "facebookAppId" {}
+
+variable "facebookAppSecret" {}
+
 provider "azurerm" {}
 
 resource "azurerm_resource_group" "rg" {
@@ -73,4 +77,22 @@ resource "azurerm_function_app" "functions" {
     "Queue-Name"                     = "${azurerm_storage_queue.news.name}"
     "APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.appinsights.instrumentation_key}"
   }
+}
+
+resource "azurerm_template_deployment" "function-settings" {
+  name                = "function-settings"
+  resource_group_name = "${azurerm_resource_group.rg.name}"
+  deployment_mode     = "Incremental"
+
+  template_body = "${file("function-settings.json")}"
+
+  parameters {
+    "name"              = "${azurerm_function_app.functions.name}"
+    "facebookAppId"     = "${var.facebookAppId}"
+    "facebookAppSecret" = "${var.facebookAppSecret}"
+  }
+
+  depends_on = [
+    "azurerm_function_app.functions",
+  ]
 }
