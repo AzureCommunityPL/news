@@ -82,6 +82,7 @@ resource "azurerm_function_app" "functions" {
     "TableStorage-Name"              = "${azurerm_storage_table.news.name}"
     "Queue-Name"                     = "${azurerm_storage_queue.news.name}"
     "APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.appinsights.instrumentation_key}"
+    "AccountStorage-Name"            = "${azurerm_storage_account.storage.name}"
   }
 }
 
