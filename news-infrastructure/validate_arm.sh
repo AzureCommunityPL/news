@@ -2,7 +2,7 @@ isError=0
 for template in $(ls *.json)
 do
     echo Validating ARM Template: $template
-    error=$(az group deployment validate --resource-group dev --template-file $template --query "error")
+    error=$(az group deployment validate --resource-group dev-news-app --template-file $template --query "error")
     if [ ! -z "$error" ]; then
         echo $error
         isError=1
