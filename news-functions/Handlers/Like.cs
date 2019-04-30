@@ -17,9 +17,9 @@ using Newtonsoft.Json;
 
 namespace NewsFunctions.Handlers
 {
-    public static class LikeOrUnlike
+    public static class Like
     {
-        [FunctionName(nameof(LikeOrUnlike))]
+        [FunctionName(nameof(Like))]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
             [Table("%TableStorage-Name%", Connection = "AccountStorage-Conn")] CloudTable cloudTable,
@@ -29,15 +29,17 @@ namespace NewsFunctions.Handlers
             log.LogInformation("C# HTTP trigger function processed a request.");
             if (req.Headers.TryGetValue(FacebookTokenValidation.AccessToken, out var accessToken))
             {
-                //var isValid  = await FacebookTokenValidation.IsTokenValid(accessToken);
-                //if (isValid == false)
-                //{
-                //    return new UnauthorizedResult();
-                //}
+                var isValid = await FacebookTokenValidation.IsTokenValid(accessToken);
+                if (isValid == false)
+                {
+                    log.LogInformation("Wrong token");
+                    return new UnauthorizedResult();
+                }
 
                 var body = await new StreamReader(req.Body).ReadToEndAsync();
                 if (string.IsNullOrWhiteSpace(body))
                 {
+                    log.LogInformation("Empty body");
                     return new BadRequestResult();
                 }
 
@@ -46,18 +48,8 @@ namespace NewsFunctions.Handlers
                 var partitionKey = DateTimeHelper.InvertTicks(likeDto.PostDate);
                 var rowKey = $"{likeDto.PostId}%--%comment%--%{likeDto.FbUserId}%--%like";
 
-                var likeRecord = await cloudTable.Get<TableEntity>(partitionKey, rowKey);
-
-
-                if (likeRecord == null)
-                {
-                    await cloudTable.ExecuteAsync(TableOperation.Insert(new TableEntity(partitionKey, rowKey)));
-                }
-                else
-                {
-                    await cloudTable.ExecuteAsync(TableOperation.Delete(likeRecord));
-                }
-
+                await cloudTable.ExecuteAsync(TableOperation.InsertOrReplace(new TableEntity(partitionKey, rowKey)));
+                log.LogInformation($"Added record :{partitionKey} - {rowKey} ");
 
                 return new OkResult();
             }
