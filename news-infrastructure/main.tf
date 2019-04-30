@@ -28,6 +28,24 @@ provider "cloudflare" {
   token = "${var.CLOUDFLARE_TOKEN}"
 }
 
+resource "cloudflare_zone_settings_override" "zone" {
+  name = "${var.zone}"
+
+  settings {
+    tls_1_3                  = "on"
+    automatic_https_rewrites = "on"
+    ssl                      = "full"
+  }
+}
+
+resource "cloudflare_record" "domain" {
+  domain  = "${var.zone}"
+  name    = "${terraform.workspace}"
+  value   = "${azurerm_function_app.functions.default_hostname}"
+  type    = "CNAME"
+  proxied = true
+}
+
 resource "cloudflare_worker_script" "workerjs" {
   zone    = "${var.zone}"
   content = "${file("worker.js")}"
