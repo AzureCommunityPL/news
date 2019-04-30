@@ -51,3 +51,4 @@ steps:
     scriptLocation: 'scriptPath'
     scriptPath: 'news-infrastructure/validate_arm.sh'
     workingDirectory: 'news-infrastructure'
+    failOnStandardError: true
