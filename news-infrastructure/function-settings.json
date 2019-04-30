@@ -21,6 +21,7 @@
             "properties": {
                 "enabled": true,
                 "tokenStoreEnabled": true,
+                "unauthenticatedClientAction": "AllowAnonymous", 
                 "facebookAppId": "[parameters('facebookAppId')]",
                 "facebookAppSecret": "[parameters('facebookAppSecret')]",
                 "facebookOAuthScopes": [
