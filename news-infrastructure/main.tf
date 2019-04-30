@@ -35,6 +35,7 @@ resource "azurerm_storage_account" "storage" {
   account_tier             = "Standard"
   account_kind             = "StorageV2"
   account_replication_type = "RAGRS"
+  is_hns_enabled           = "false"
 }
 
 resource "azurerm_storage_table" "news" {
@@ -103,7 +104,7 @@ resource "azurerm_template_deployment" "function-settings" {
 }
 
 resource "azurerm_template_deployment" "logicapp" {
-  name                = "function-settings"
+  name                = "logicapp"
   resource_group_name = "${azurerm_resource_group.rg.name}"
   deployment_mode     = "Incremental"
 
