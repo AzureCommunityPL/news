@@ -1,32 +1,59 @@
 import { NgModule } from '@angular/core';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { BsDatepickerModule as NgxDatePickerModule } from 'ngx-bootstrap/datepicker';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { ToastrModule as NgxToastrModule } from 'ngx-toastr';
+
+const NgExports = [
+  FormsModule,
+  BrowserAnimationsModule
+];
+
+const NgxModules = [
+  NgxDatePickerModule.forRoot(),
+  NgxSpinnerModule,
+  NgxToastrModule.forRoot()
+];
+
+const NgxExports = [
+  NgxDatePickerModule,
+  NgxSpinnerModule,
+  NgxToastrModule
+];
+
+// clients
+import { CoreHttpClient } from './http';
+import { ODataClient } from './odata';
+
+const Clients = [
+  CoreHttpClient,
+  ODataClient
+];
 
 // services
-import { FacebookService, FacebookGraphApiService } from './facebook';
-import { CoreHttpClient } from './http';
 import { ApiService } from './api';
-import { ODataClient } from './odata';
-import { StorageService } from './storage';
 import { DateService } from './utils';
+import { FacebookService, FacebookGraphApiService } from './facebook';
+import { StorageService } from './storage';
+import { SpinnerService } from './spinner';
+import { ToastrService } from './toastr';
+
+const Services = [
+  ApiService,
+  DateService,
+  FacebookGraphApiService,
+  FacebookService,
+  SpinnerService,
+  StorageService,
+  ToastrService
+];
 
 const NgModules = [
   HttpClientModule,
   FormsModule
-];
-
-const NgExports = [
-  FormsModule
-];
-
-const NgxModules = [
-  BsDatepickerModule.forRoot(),
-];
-
-const NgxExports = [
-  BsDatepickerModule
 ];
 
 @NgModule({
@@ -35,17 +62,12 @@ const NgxExports = [
     ...NgxModules
   ],
   providers: [
-    FacebookService,
-    FacebookGraphApiService,
-    CoreHttpClient,
-    ODataClient,
-    ApiService,
-    StorageService,
-    DateService
+    ...Clients,
+    ...Services
   ],
   exports: [
     ...NgExports,
-    ...NgxExports
+    ...NgxExports,
   ]
 })
 export class SharedModule { }

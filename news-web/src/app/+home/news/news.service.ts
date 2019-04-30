@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { switchMap, map, tap, publishReplay, refCount } from 'rxjs/operators';
+import { switchMap, map, tap, publishReplay, refCount, finalize } from 'rxjs/operators';
 
 import { ApiService } from '../../_shared/api';
 import { StorageService, NewsResponseDto } from '../../_shared/storage';
