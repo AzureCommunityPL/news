@@ -1,23 +1,44 @@
 {
   "name": "azure-global-bootcamp",
-  "version": "0.0.0",
+  "version": "1.0.0",
+
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:ci": "jest --runInBand",
+    "test": "jest --coverage --coverageDirectory=output/coverage/jest",
+    "test:watch": "jest --watch --coverage --coverageDirectory=output/coverage/jest",
+    "test:ci": "jest --runInBand --coverage --coverageDirectory=output/coverage/jest",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
+
   "jest": {
     "preset": "jest-preset-angular",
+    "reporters": [
+      "default",
+      "jest-junit"
+    ],
+    "coverageReporters": [
+      "text",
+      "cobertura"
+    ],
     "setupTestFrameworkScriptFile": "<rootDir>/src/setupJest.ts",
     "testPathIgnorePatterns": [
       "<rootDir>/src/test.ts"
     ]
   },
+
+  "jest-junit": {
+    "suiteName": "jest tests",
+    "outputDirectory": ".",
+    "outputName": "./output/results/junit/junit.xml",
+    "classNameTemplate": "{classname}-{title}",
+    "titleTemplate": "{classname}-{title}",
+    "ancestorSeparator": " › ",
+    "usePathForSuiteName": "true"
+  },
+  
   "private": true,
   "dependencies": {
     "@angular/animations": "~7.2.0",
@@ -46,6 +67,7 @@
     "@types/node": "~8.9.4",
     "codelyzer": "~4.5.0",
     "jest": "^24.7.1",
+    "jest-junit": "^6.3.0",
     "jest-preset-angular": "^7.1.0",
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",

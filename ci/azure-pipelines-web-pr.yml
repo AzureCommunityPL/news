@@ -29,9 +29,30 @@ steps:
     customCommand: 'run lint'
 
 - task: Npm@1
+  displayName: 'npm run test:ci'
+  inputs:
+    command: custom
+    workingDir: 'news-web'
+    verbose: false
+    customCommand: 'run test:ci'
+
+- task: Npm@1
   displayName: 'npm run build'
   inputs:
     command: custom
     workingDir: 'news-web'
     verbose: false
     customCommand: 'run build --prod'
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/junit.xml' 
+    searchFolder: '$(System.DefaultWorkingDirectory)/news-web/output/results/junit' # Optional
+    mergeTestResults: true
+
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'cobertura'
+    summaryFileLocation: $(System.DefaultWorkingDirectory)/news-web/output/coverage/jest/cobertura-coverage.xml 
+    failIfCoverageEmpty: true
