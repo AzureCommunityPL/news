@@ -1,0 +1,45 @@
+
+
+trigger: none
+
+pr:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - news-infrastructure/*
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+steps:
+
+- task: AzureCLI@1
+  displayName: 'Get Azure Vars'
+  inputs:
+    azureSubscription: 'AzureCommunityPL/news (d126dc91-4b54-4b49-857d-4e0c0f67fdfa)'
+    scriptLocation: inlineScript
+    inlineScript: |
+     echo "##vso[task.setvariable variable=ARM_ACCESS_KEY]$(az storage account keys list -g tf -n tfnewsappstate --query "[0].value" -o tsv)"
+     echo "##vso[task.setvariable variable=ARM_CLIENT_ID]$servicePrincipalId"
+     echo "##vso[task.setvariable variable=ARM_CLIENT_SECRET]$servicePrincipalKey"
+     echo "##vso[task.setvariable variable=ARM_TENANT_ID]$(az account show --query  "tenantId" -o tsv)"
+     echo "##vso[task.setvariable variable=ARM_SUBSCRIPTION_ID]$(az account show --query  "id" -o tsv)"
+    addSpnToEnvironment: true
+
+- script: 'terraform init'
+  workingDirectory: '$(System.DefaultWorkingDirectory)/_news-infrastructure-ci/infrastructure'
+  displayName: 'terraform init'
+
+- script: 'terraform workspace select dev'
+  workingDirectory: '$(System.DefaultWorkingDirectory)/_news-infrastructure-ci/infrastructure'
+  displayName: 'terraform workspace'
+
+- script: 'terraform validate'
+  workingDirectory: '$(System.DefaultWorkingDirectory)/_news-infrastructure-ci/infrastructure'
+  displayName: 'terraform validate'
+
+- script: 'terraform plan'
+  workingDirectory: '$(System.DefaultWorkingDirectory)/_news-infrastructure-ci/infrastructure'
+  displayName: 'terraform plan'
