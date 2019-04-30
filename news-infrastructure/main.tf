@@ -6,6 +6,13 @@ terraform {
   }
 }
 
+variable "CLOUDFLARE_EMAIL" {}
+variable "CLOUDFLARE_TOKEN" {}
+
+variable "zone" {
+  default = "azurenews.pl"
+}
+
 variable "FACEBOOKAPPID" {
   type = "string"
 }
@@ -15,6 +22,23 @@ variable "FACEBOOKAPPSECRET" {
 }
 
 provider "azurerm" {}
+
+provider "cloudflare" {
+  email = "${var.CLOUDFLARE_EMAIL}"
+  token = "${var.CLOUDFLARE_TOKEN}"
+}
+
+resource "cloudflare_worker_script" "workerjs" {
+  zone    = "${var.zone}"
+  content = "${file("worker.js")}"
+}
+
+resource "cloudflare_worker_route" "route" {
+  zone       = "${var.zone}"
+  pattern    = "${terraform.workspace}.${var.zone}/*"
+  enabled    = true
+  depends_on = ["cloudflare_worker_script.workerjs"]
+}
 
 resource "azurerm_resource_group" "rg" {
   name     = "${terraform.workspace}-news-app"
