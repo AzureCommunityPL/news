@@ -21,6 +21,24 @@ variable "FACEBOOKAPPSECRET" {
   type = "string"
 }
 
+variable "cf_account_id" {
+  "default" = "d5b58a2229c11224b000073d2b8e33d3"
+  type      = "string"
+}
+
+variable "cf_namespace_name" {
+  default = "406394498dec4b9eaeb3d096ab886219"
+  type    = "string"
+}
+
+variable "cloudflare_record_name" {
+  type = "map"
+
+  default = {
+    prod = "@"
+  }
+}
+
 provider "azurerm" {}
 
 provider "cloudflare" {
@@ -40,7 +58,7 @@ resource "cloudflare_zone_settings_override" "zone" {
 
 resource "cloudflare_record" "domain" {
   domain  = "${var.zone}"
-  name    = "${terraform.workspace}"
+  name    = "${lookup(var.cloudflare_record_name, terraform.workspace, terraform.workspace)}"
   value   = "${azurerm_function_app.functions.default_hostname}"
   type    = "CNAME"
   proxied = true
@@ -56,6 +74,26 @@ resource "cloudflare_worker_route" "route" {
   pattern    = "${terraform.workspace}.${var.zone}/*"
   enabled    = true
   depends_on = ["cloudflare_worker_script.workerjs"]
+}
+
+resource "null_resource" "cloudflare_kv_settings" {
+  triggers {
+    build_number = "${timestamp()}"
+  }
+
+  provisioner "local-exec" {
+    command = <<REQUEST
+curl "https://api.cloudflare.com/client/v4/accounts/${var.cf_account_id}/storage/kv/namespaces/${var.cf_namespace_name}/values/${terraform.workspace}" \
+-X PUT \
+-H "X-Auth-Email: ${var.CLOUDFLARE_EMAIL}" \
+-H "X-Auth-Key: ${var.CLOUDFLARE_TOKEN}" \
+--data '{
+	"api": "${azurerm_function_app.functions.default_hostname}",
+	"spa" : "${azurerm_storage_account.storage.primary_web_host}",
+	"storage" : "${azurerm_storage_account.storage.primary_table_host}
+    }'
+REQUEST
+  }
 }
 
 resource "azurerm_resource_group" "rg" {
