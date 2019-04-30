@@ -10,6 +10,6 @@ do
 done
 
 if [ $isError -eq 1 ]; then
-    echo "There is an error" > &2
+    echo "There is an error" > /dev/stderr
     exit 1
 fi
