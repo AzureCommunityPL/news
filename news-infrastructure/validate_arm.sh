@@ -1,4 +1,3 @@
-
 isError=0
 for template in $(ls *.json)
 do
