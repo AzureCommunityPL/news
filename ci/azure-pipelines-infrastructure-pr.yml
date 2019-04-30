@@ -29,17 +29,17 @@ steps:
     addSpnToEnvironment: true
 
 - script: 'terraform init'
-  workingDirectory: '$(System.DefaultWorkingDirectory)/_news-infrastructure-ci/infrastructure'
+  workingDirectory: 'news-infrastructure'
   displayName: 'terraform init'
 
 - script: 'terraform workspace select dev'
-  workingDirectory: '$(System.DefaultWorkingDirectory)/_news-infrastructure-ci/infrastructure'
+  workingDirectory: 'news-infrastructure'
   displayName: 'terraform workspace'
 
 - script: 'terraform validate'
-  workingDirectory: '$(System.DefaultWorkingDirectory)/_news-infrastructure-ci/infrastructure'
+  workingDirectory: 'news-infrastructure'
   displayName: 'terraform validate'
 
 - script: 'terraform plan'
-  workingDirectory: '$(System.DefaultWorkingDirectory)/_news-infrastructure-ci/infrastructure'
+  workingDirectory: 'news-infrastructure'
   displayName: 'terraform plan'
