@@ -1,0 +1,10 @@
+{
+    "body_part": "script",
+    "bindings": [
+        {
+            "type": "kv_namespace",
+            "name": "ENVIRONMENT",
+            "namespace_id": "406394498dec4b9eaeb3d096ab886219"
+        }
+    ]
+}
