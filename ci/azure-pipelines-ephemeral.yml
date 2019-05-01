@@ -14,7 +14,6 @@ stages:
     pool:
       vmImage: 'Ubuntu-16.04'
     steps:
-    
     - task: Npm@1
       displayName: 'npm install'
       inputs:
@@ -57,6 +56,21 @@ stages:
         codeCoverageTool: 'cobertura'
         summaryFileLocation: $(System.DefaultWorkingDirectory)/news-web/output/coverage/jest/cobertura-coverage.xml 
         failIfCoverageEmpty: true
+
+  - job: Functions
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    steps:
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'restore'
+        projects: 'news-functions/*.csproj'
+        workingDirectory: '/news-functions'
+    
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'build'
+        projects: 'news-functions/*.csproj'
 
 - stage: Infrastructure
   jobs:
