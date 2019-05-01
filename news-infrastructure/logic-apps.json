@@ -7,42 +7,48 @@
             "minLength": 1,
             "metadata": {
                 "description": "Describes the name of the Api Connection resource"
-            }
+            },
+            "defaultValue": "queueApiConnectionName"
         },
         "storageAccountName": {
             "type": "string",
             "minLength": 1,
             "metadata": {
                 "description": "Describes the name of the Storage Account resource"
-            }
+            },
+            "defaultValue": "storageAccountName"
         },
         "storageAccountKey": {
             "type": "securestring",
             "minLength": 1,
             "metadata": {
                 "description": "Storage Account Key"
-            }
+            },
+            "defaultValue": "storageAccountKey"
         },
         "rssApiConnectionName": {
             "type": "string",
             "minLength": 1,
             "metadata": {
                 "description": "Describes the name of the Api Connection resource"
-            }
+            },
+            "defaultValue": "rssApiConnectionName"
         },
         "logicAppName": {
             "type": "string",
             "minLength": 1,
             "metadata": {
                 "description": "Describes the name of the Logic App resource"
-            }
+            },
+            "defaultValue": "logicAppName"
         },
         "feedUrl": {
             "type": "string",
             "minLength": 1,
             "metadata": {
                 "description": "URL to RSS feed"
-            }
+            },
+            "defaultValue": "feedUrl"
         }
     },
     "variables": {

@@ -43,3 +43,12 @@ steps:
 - script: 'terraform plan'
   workingDirectory: 'news-infrastructure'
   displayName: 'terraform plan'
+
+- task: AzureCLI@1  
+  displayName: 'Validate ARM templates'
+  inputs:
+    connectedServiceNameARM: 'AzureCommunityPL/news (d126dc91-4b54-4b49-857d-4e0c0f67fdfa)'
+    scriptLocation: 'scriptPath'
+    scriptPath: 'news-infrastructure/validate_arm.sh'
+    workingDirectory: 'news-infrastructure'
+    failOnStandardError: true

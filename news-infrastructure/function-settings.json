@@ -3,13 +3,16 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "name": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "name"
         },
         "facebookAppId": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "facebookAppId"
         },
         "facebookAppSecret": {
-            "type": "securestring"
+            "type": "securestring",
+            "defaultValue": "facebookAppSecret"
         }
     },
     "resources": [
