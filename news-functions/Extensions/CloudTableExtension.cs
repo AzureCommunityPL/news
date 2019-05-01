@@ -25,6 +25,7 @@ namespace NewsFunctions.Extensions
                 result = segment.FirstOrDefault();
                 continuationToken = segment.ContinuationToken;
             } while (continuationToken != null);
+
             return result;
         }
     }
