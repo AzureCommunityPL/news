@@ -10,9 +10,9 @@ pr:
     - news-*/*
 
 stages:
-- stage: Infrastructure
+- stage: Infrastructurse
   jobs:
-  - job: Apply infrastructure
+  - job: 'Apply Infrastructure'
     pool:
       vmImage: 'Ubuntu-16.04'
     steps:
