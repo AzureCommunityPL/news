@@ -76,8 +76,8 @@ stages:
       inputs:
         command: publish
         publishWebProjects: false
-        projects: '$(Parameters.RestoreBuildProjects)'
-        arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+        projects: news-functions/*.csproj
+        arguments: '--configuration Release --output $(build.artifactstagingdirectory)'
         zipAfterPublish: True
 
     - task: PublishBuildArtifacts@1
