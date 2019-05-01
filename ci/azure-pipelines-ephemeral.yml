@@ -72,6 +72,13 @@ stages:
         command: 'build'
         projects: 'news-functions/*.csproj'
 
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)'
+        ArtifactName: 'functions-ci'
+      condition: succeededOrFailed()
+
 - stage: Infrastructure
   jobs:
   - job: Apply_Infrastructure
