@@ -62,12 +62,14 @@ stages:
       vmImage: 'Ubuntu-16.04'
     steps:
     - task: DotNetCoreCLI@2
+      displayName: restore
       inputs:
         command: 'restore'
         projects: 'news-functions/*.csproj'
         workingDirectory: '/news-functions'
     
     - task: DotNetCoreCLI@2
+      displayName: build
       inputs:
         command: 'build'
         projects: 'news-functions/*.csproj'
@@ -150,7 +152,7 @@ stages:
       inputs:
         azureSubscription: 'AzureCommunityPL/news (d126dc91-4b54-4b49-857d-4e0c0f67fdfa)'
         scriptLocation: inlineScript
-        inlineScript: 'az storage blob service-properties update --account-name ${$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER}newssa --static-website  --index-document index.html --404-document 404.html'
+        inlineScript: 'az storage blob service-properties update --account-name $(System.PullRequest.PullRequestNumber)newssa --static-website  --index-document index.html --404-document 404.html'
 
 - stage: Publish
   jobs:
@@ -161,3 +163,12 @@ stages:
     - task: DownloadBuildArtifacts@0
       inputs:
         artifactName: 'functions-ci'
+    
+    - task: AzureFunctionApp@1
+      displayName: 'Azure Function App Deploy'
+      inputs:
+        azureSubscription: 'AzureCommunityPL/news (d126dc91-4b54-4b49-857d-4e0c0f67fdfa)'
+        appType: functionApp
+        appName: '$(System.PullRequest.PullRequestNumber)-news-functions'
+        package: '$(System.DefaultWorkingDirectory)/_news-functions-ci/functions-ci/news-functions.zip'
+    
