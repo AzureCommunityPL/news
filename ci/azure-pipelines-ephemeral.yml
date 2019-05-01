@@ -9,13 +9,12 @@ pr:
     include:
     - news-*/*
 
-pool:
-  vmImage: 'Ubuntu-16.04'
-
 stages:
 - stage: Infrastructure
   jobs:
   - job: Apply infrastructure
+    pool:
+      vmImage: 'Ubuntu-16.04'
     steps:
     - task: AzureCLI@1 
       displayName: 'Get Azure Vars'
