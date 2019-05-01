@@ -172,6 +172,14 @@ stages:
         appName: 'pr$(System.PullRequest.PullRequestNumber)-news-functions'
         package: '$(build.artifactstagingdirectory)/functions-ci/news-functions.zip'
 
+    - task: AzureCLI@1
+      displayName: 'Azure CLI '
+      inputs:
+        azureSubscription: 'AzureCommunityPL/news (d126dc91-4b54-4b49-857d-4e0c0f67fdfa)'
+        scriptLocation: inlineScript
+        inlineScript: |         
+         az functionapp restart --name pr$(System.PullRequest.PullRequestNumber)-news-functions --resource-group pr$(System.PullRequest.PullRequestNumber)-news-app
+
   - job: Web
     pool:
       vmImage: 'Ubuntu-16.04'
