@@ -5,9 +5,6 @@ pr:
   branches:
     include:
     - master
-  paths:
-    include:
-    - news-*/*
 
 stages:
 
@@ -17,7 +14,6 @@ stages:
     pool:
       vmImage: 'Ubuntu-16.04'
     steps:
-    
     - task: Npm@1
       displayName: 'npm install'
       inputs:
@@ -61,9 +57,41 @@ stages:
         summaryFileLocation: $(System.DefaultWorkingDirectory)/news-web/output/coverage/jest/cobertura-coverage.xml 
         failIfCoverageEmpty: true
 
+  - job: Functions
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    steps:
+    - task: DotNetCoreCLI@2
+      displayName: restore
+      inputs:
+        command: 'restore'
+        projects: 'news-functions/*.csproj'
+        workingDirectory: '/news-functions'
+    
+    - task: DotNetCoreCLI@2
+      displayName: build
+      inputs:
+        command: 'build'
+        projects: 'news-functions/*.csproj'
+    - task: DotNetCoreCLI@2
+      displayName: Publish
+      inputs:
+        command: publish
+        publishWebProjects: false
+        projects: news-functions/*.csproj
+        arguments: '--configuration Release --output $(build.artifactstagingdirectory)'
+        zipAfterPublish: True
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)'
+        ArtifactName: 'functions-ci'
+      condition: succeededOrFailed()
+
 - stage: Infrastructure
   jobs:
-  - job: Apply_Infrastructure
+  - job: Apply
     pool:
       vmImage: 'Ubuntu-16.04'
     steps:
@@ -78,6 +106,7 @@ stages:
          echo "##vso[task.setvariable variable=ARM_CLIENT_SECRET]$servicePrincipalKey"
          echo "##vso[task.setvariable variable=ARM_TENANT_ID]$(az account show --query  "tenantId" -o tsv)"
          echo "##vso[task.setvariable variable=ARM_SUBSCRIPTION_ID]$(az account show --query  "id" -o tsv)"
+
          printenv
         addSpnToEnvironment: true
     
@@ -100,7 +129,102 @@ stages:
     - script: 'terraform validate'
       workingDirectory: 'news-infrastructure'
       displayName: 'terraform validate'
-    
-    - script: 'terraform plan'
+
+    - task: AzureCLI@1  
+      displayName: 'Validate ARM templates'
+      inputs:
+        connectedServiceNameARM: 'AzureCommunityPL/news (d126dc91-4b54-4b49-857d-4e0c0f67fdfa)'
+        scriptLocation: 'scriptPath'
+        scriptPath: 'news-infrastructure/validate_arm.sh'
+        workingDirectory: 'news-infrastructure'
+        failOnStandardError: true    
+
+    - script: 'terraform apply -auto-approve'
+      displayName: 'terraform apply'
       workingDirectory: 'news-infrastructure'
-      displayName: 'terraform plan'
+
+    - task: AzureCLI@1
+      displayName: 'Enable Storage Account Static Storage'
+      inputs:
+        azureSubscription: 'AzureCommunityPL/news (d126dc91-4b54-4b49-857d-4e0c0f67fdfa)'
+        scriptLocation: inlineScript
+        inlineScript: 'az storage blob service-properties update --account-name pr$(System.PullRequest.PullRequestNumber)newssa --static-website  --index-document index.html --404-document 404.html'
+
+- stage: Publish
+  jobs:
+  - job: Functions
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    steps:
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        artifactName: 'functions-ci'
+
+    - task: AzureFunctionApp@1
+      displayName: 'Azure Function App Deploy'
+      inputs:
+        azureSubscription: 'AzureCommunityPL/news (d126dc91-4b54-4b49-857d-4e0c0f67fdfa)'
+        appType: functionApp
+        appName: 'pr$(System.PullRequest.PullRequestNumber)-news-functions'
+        package: '$(build.artifactstagingdirectory)/functions-ci/news-functions.zip'
+
+    - task: AzureCLI@1
+      displayName: 'Functionapp restart & initial load'
+      inputs:
+        azureSubscription: 'AzureCommunityPL/news (d126dc91-4b54-4b49-857d-4e0c0f67fdfa)'
+        scriptLocation: inlineScript
+        inlineScript: |         
+         az functionapp restart --name pr$(System.PullRequest.PullRequestNumber)-news-functions --resource-group pr$(System.PullRequest.PullRequestNumber)-news-app
+         curl --data "" -H "Authorization: Bearer $(az account get-access-token | jq ".accessToken" -r)" https://management.azure.com/subscriptions/$(az account show | jq ".id" -r)/resourceGroups/pr$(System.PullRequest.PullRequestNumber)-news-app/providers/Microsoft.Logic/workflows/pr$(System.PullRequest.PullRequestNumber)-news-la-azure-blog-initial-load/triggers/manual/run?api-version=2016-06-01
+
+  - job: Web
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    steps:
+    - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+      displayName: 'Replace tokens in **/*.ts'
+      inputs:
+        rootDirectory: 'news-web/src/environments'
+        targetFiles: '**/*.ts'
+    
+    - task: Npm@1
+      displayName: 'npm install'
+      inputs:
+        workingDir: 'news-web'
+        verbose: false
+    
+    - task: Npm@1
+      displayName: 'npm run lint'
+      inputs:
+        command: custom
+        workingDir: 'news-web'
+        verbose: false
+        customCommand: 'run lint'
+    
+    - task: Npm@1
+      displayName: 'npm run build --prod'
+      inputs:
+        command: custom
+        workingDir: 'news-web'
+        verbose: false
+        customCommand: 'run build -- --prod'
+
+    - task: AzureCLI@1
+      displayName: 'Upload app'
+      inputs:
+        azureSubscription: 'AzureCommunityPL/news (d126dc91-4b54-4b49-857d-4e0c0f67fdfa)'
+        scriptLocation: inlineScript
+        inlineScript: |         
+         az storage blob upload-batch -d "\$web" --account-name "pr$(System.PullRequest.PullRequestNumber)newssa" -s "news-web/dist/azure-global-bootcamp"
+
+- stage: Notify
+  jobs:
+  - job: Notify
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    steps:
+    - task: CmdLine@2
+      displayName: 'notify slack'
+      inputs:
+        script: 'curl -X POST -H ''Content-type: application/json'' --data ''{"text":"New PR Environment! :poop: \n https://pr$(System.PullRequest.PullRequestNumber).azurenews.pl "}'' https://hooks.slack.com/services/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'
+      
