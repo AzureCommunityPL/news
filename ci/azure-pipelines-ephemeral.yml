@@ -81,7 +81,7 @@ stages:
 
 - stage: Infrastructure
   jobs:
-  - job: Apply_Infrastructure
+  - job: Apply
     pool:
       vmImage: 'Ubuntu-16.04'
     steps:
@@ -123,3 +123,13 @@ stages:
     - script: 'terraform plan'
       workingDirectory: 'news-infrastructure'
       displayName: 'terraform plan'
+
+- stage: Publish
+  jobs:
+  - job: Functions
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    steps:
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        artifactName: 'functions-ci'
