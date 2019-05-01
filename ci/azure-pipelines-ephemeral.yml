@@ -171,3 +171,43 @@ stages:
         appType: functionApp
         appName: 'pr$(System.PullRequest.PullRequestNumber)-news-functions'
         package: '$(build.artifactstagingdirectory)/functions-ci/news-functions.zip'
+
+  - job: Web
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    steps:
+    - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+      displayName: 'Replace tokens in **/*.ts'
+      inputs:
+        rootDirectory: 'news-web/src/environments'
+        targetFiles: '**/*.ts'
+    
+    - task: Npm@1
+      displayName: 'npm install'
+      inputs:
+        workingDir: 'news-web'
+        verbose: false
+    
+    - task: Npm@1
+      displayName: 'npm run lint'
+      inputs:
+        command: custom
+        workingDir: 'news-web'
+        verbose: false
+        customCommand: 'run lint'
+    
+    - task: Npm@1
+      displayName: 'npm run build --prod'
+      inputs:
+        command: custom
+        workingDir: 'news-web'
+        verbose: false
+        customCommand: 'run build -- --prod'
+
+    - task: AzureCLI@1
+      displayName: 'Azure CLI '
+      inputs:
+        azureSubscription: 'AzureCommunityPL/news (d126dc91-4b54-4b49-857d-4e0c0f67fdfa)'
+        scriptLocation: inlineScript
+        inlineScript: |         
+         az storage blob upload-batch -d "\$web" --account-name "pr$(System.PullRequest.PullRequestNumber)newssa" -s "news-web/dist/azure-global-bootcamp"
