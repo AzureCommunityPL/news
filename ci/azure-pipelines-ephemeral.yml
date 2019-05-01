@@ -142,11 +142,7 @@ stages:
     - script: 'terraform apply -auto-approve'
       displayName: 'terraform apply'
       workingDirectory: 'news-infrastructure'
-    
-    - script: 'terraform plan'
-      workingDirectory: 'news-infrastructure'
-      displayName: 'terraform plan'
-    
+
     - task: AzureCLI@1
       displayName: 'Enable Storage Account Static Storage'
       inputs:
