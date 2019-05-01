@@ -223,5 +223,8 @@ stages:
     pool:
       vmImage: 'Ubuntu-16.04'
     steps:
-    - script: 'curl -X POST -H ''Content-type: application/json'' --data ''{"text":"New PR Environment! :poop: \n https://pr$(System.PullRequest.PullRequestNumber).azurenews.pl "}'' https://hooks.slack.com/services/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'
+    - task: CmdLine@2
       displayName: 'notify slack'
+      inputs:
+        script: 'curl -X POST -H ''Content-type: application/json'' --data ''{"text":"New PR Environment! :poop: \n https://pr$(System.PullRequest.PullRequestNumber).azurenews.pl "}'' https://hooks.slack.com/services/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'
+      
