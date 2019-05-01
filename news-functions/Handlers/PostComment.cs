@@ -32,6 +32,13 @@ namespace NewsFunctions.Handlers
                 
                 if (req.Headers.TryGetValue("access_token", out var accessToken))
                 {
+                    var isValid = await FacebookTokenValidation.IsTokenValid(accessToken);
+                    if (isValid == false)
+                    {
+                        log.LogInformation("Wrong token");
+                        return new UnauthorizedResult();
+                    }
+
                     var body = await new StreamReader(req.Body).ReadToEndAsync();
                     if (string.IsNullOrWhiteSpace(body))
                     {
@@ -39,22 +46,12 @@ namespace NewsFunctions.Handlers
                     }
                     var comment = JsonConvert.DeserializeObject<CommentDto>(body);
 
-                    var graphResponse = await _httpClient.SendAsync(new HttpRequestMessage()
-                    {
-                        RequestUri = new Uri("https://graph.facebook.com/v2.11/me?fields=id"),
-                        Method = HttpMethod.Get,
-                        Headers = { {"Authorization", $"Bearer {accessToken.ToString()}" } }
-                    }, cancellationToken);
-                    graphResponse.EnsureSuccessStatusCode();
-                    var graphContent = await graphResponse.Content.ReadAsStringAsync();
-
-                    var fbProfile = JsonConvert.DeserializeObject<FacebookProfileDto>(graphContent); 
 
                    await collector.ExecuteAsync(
                        TableOperation.InsertOrReplace(new CommentTable
                         {
                             PartitionKey= DateTimeHelper.InvertTicks(comment.PostDateTime),
-                            RowKey = $"{comment.PostId}/comment/{fbProfile.Id}",
+                            RowKey = $"{comment.PostId}/comment/{comment.FbUserId}",
                             Comment =  comment.Comment,
                             Title = comment.Title
                        }));
