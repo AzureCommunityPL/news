@@ -12,7 +12,7 @@ pr:
 stages:
 - stage: Infrastructurse
   jobs:
-  - job: 'Apply Infrastructure'
+  - job: Apply_Infrastructure
     pool:
       vmImage: 'Ubuntu-16.04'
     steps:
