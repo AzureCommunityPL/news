@@ -127,10 +127,30 @@ stages:
     - script: 'terraform validate'
       workingDirectory: 'news-infrastructure'
       displayName: 'terraform validate'
+
+    - task: AzureCLI@1  
+      displayName: 'Validate ARM templates'
+      inputs:
+        connectedServiceNameARM: 'AzureCommunityPL/news (d126dc91-4b54-4b49-857d-4e0c0f67fdfa)'
+        scriptLocation: 'scriptPath'
+        scriptPath: 'news-infrastructure/validate_arm.sh'
+        workingDirectory: 'news-infrastructure'
+        failOnStandardError: true    
+
+    - script: 'terraform apply -auto-approve'
+      displayName: 'terraform apply'
+      workingDirectory: 'news-infrastructure'
     
     - script: 'terraform plan'
       workingDirectory: 'news-infrastructure'
       displayName: 'terraform plan'
+    
+    - task: AzureCLI@1
+      displayName: 'Enable Storage Account Static Storage'
+      inputs:
+        azureSubscription: 'AzureCommunityPL/news (d126dc91-4b54-4b49-857d-4e0c0f67fdfa)'
+        scriptLocation: inlineScript
+        inlineScript: 'az storage blob service-properties update --account-name $(SYSTEM_PULLREQUEST_PULLREQUESTNUMBER)newssa --static-website  --index-document index.html --404-document 404.html'
 
 - stage: Publish
   jobs:
