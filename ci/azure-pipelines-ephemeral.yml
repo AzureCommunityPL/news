@@ -164,14 +164,10 @@ stages:
       inputs:
         artifactName: 'functions-ci'
 
-    - script: 'cd $(build.artifactstagingdirectory); ls -la'
-      workingDirectory: 'news-infrastructure'
-      displayName: 'ls' 
-
     - task: AzureFunctionApp@1
       displayName: 'Azure Function App Deploy'
       inputs:
         azureSubscription: 'AzureCommunityPL/news (d126dc91-4b54-4b49-857d-4e0c0f67fdfa)'
         appType: functionApp
-        appName: '$(System.PullRequest.PullRequestNumber)-news-functions'
+        appName: 'pr$(System.PullRequest.PullRequestNumber)-news-functions'
         package: '$(build.artifactstagingdirectory)/functions-ci/news-functions.zip'
