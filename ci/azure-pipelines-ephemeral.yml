@@ -169,12 +169,13 @@ stages:
         package: '$(build.artifactstagingdirectory)/functions-ci/news-functions.zip'
 
     - task: AzureCLI@1
-      displayName: 'Functionapp restart'
+      displayName: 'Functionapp restart & initial load'
       inputs:
         azureSubscription: 'AzureCommunityPL/news (d126dc91-4b54-4b49-857d-4e0c0f67fdfa)'
         scriptLocation: inlineScript
         inlineScript: |         
          az functionapp restart --name pr$(System.PullRequest.PullRequestNumber)-news-functions --resource-group pr$(System.PullRequest.PullRequestNumber)-news-app
+         curl --data "" -H "Authorization: Bearer $(az account get-access-token | jq ".accessToken" -r)" https://management.azure.com/subscriptions/$(az account show | jq ".id" -r)/resourceGroups/pr$(System.PullRequest.PullRequestNumber)-news-app/providers/Microsoft.Logic/workflows/pr$(System.PullRequest.PullRequestNumber)-news-la-azure-blog-initial-load/triggers/manual/run?api-version=2016-06-01
 
   - job: Web
     pool:
