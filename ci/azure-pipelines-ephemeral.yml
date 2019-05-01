@@ -10,7 +10,58 @@ pr:
     - news-*/*
 
 stages:
-- stage: Infrastructurse
+
+- stage: Build
+  jobs:
+  - job: Web
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    steps:
+    
+    - task: Npm@1
+      displayName: 'npm install'
+      inputs:
+        workingDir: 'news-web'
+        verbose: false
+    
+    - task: Npm@1
+      displayName: 'npm run lint'
+      inputs:
+        command: custom
+        workingDir: 'news-web'
+        verbose: false
+        customCommand: 'run lint'
+    
+    - task: Npm@1
+      displayName: 'npm run test:ci'
+      inputs:
+        command: custom
+        workingDir: 'news-web'
+        verbose: false
+        customCommand: 'run test:ci'
+    
+    - task: Npm@1
+      displayName: 'npm run build'
+      inputs:
+        command: custom
+        workingDir: 'news-web'
+        verbose: false
+        customCommand: 'run build --prod'
+    
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '**/junit.xml' 
+        searchFolder: '$(System.DefaultWorkingDirectory)/news-web/output/results/junit' # Optional
+        mergeTestResults: true
+    
+    - task: PublishCodeCoverageResults@1
+      inputs:
+        codeCoverageTool: 'cobertura'
+        summaryFileLocation: $(System.DefaultWorkingDirectory)/news-web/output/coverage/jest/cobertura-coverage.xml 
+        failIfCoverageEmpty: true
+
+- stage: Infrastructure
   jobs:
   - job: Apply_Infrastructure
     pool:
