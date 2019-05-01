@@ -1,0 +1,18 @@
+@import '../../styles.scss';
+
+nav {
+    display: flex;
+    flex-direction: row;
+
+    div.container-fluid {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+}
+
+img.user-avatar {
+    border-radius: 13px;
+    height: 26px;
+    height: 26px
+}

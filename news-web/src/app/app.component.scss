@@ -1,3 +1,5 @@
+@import '../styles.scss';
+
 html {
     font-size: 14px;
 }
@@ -8,18 +10,22 @@ html {
   }
 }
 
-.container {
-  max-width: 960px;
-}
+div.container-fluid {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 
-.pricing-header {
-  max-width: 700px;
-}
+  padding-left:   0 !important;
+  padding-right:  0 !important;
 
-.card-deck .card {
-  min-width: 220px;
-}
+  header {
+    background: $light-background;
+  }
 
-.user-avatar {
-  height: 26px
+  footer {
+    margin: auto 0 0 0;
+    padding-top: 1em;
+    background: $dark-background;
+    color: $light;
+  }
 }

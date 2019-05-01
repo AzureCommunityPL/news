@@ -3,31 +3,10 @@ $light: #f8f9fa;
 $light-background: #f8f9fa;
 $dark-background: #212529;
 
-header {
-    background: $light-background;
-    
-    img {
-        border-radius: 13px;
-        height: 26px;
-    }
+body {
+    min-height: 100vh;
 }
 
-footer {
-    background: $dark-background;
-    color: $light;
-
-    .tech-logo {
-        height: 32px;
-    }
-
-    .maugp-logo {
-        height: 128px;
-    }
-
-    li {
-        list-style:none;
-        background-image:none;
-        background-repeat:none;
-        background-position:0; 
-    }
+.container {
+    max-width: 960px;
 }

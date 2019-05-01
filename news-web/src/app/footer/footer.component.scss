@@ -1,0 +1,28 @@
+@import '../../styles.scss';
+
+
+
+    .tech-list {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+    }
+
+    .tech-logo {
+        height: 32px;
+        margin-left: 4px;
+        margin-right: 4px;
+        margin-top: 4px;
+        margin-bottom: 4px;
+    }
+
+    .maugp-logo {
+        height: 128px;
+    }
+
+    li {
+        list-style:none;
+        background-image:none;
+        background-repeat:none;
+        background-position:0; 
+    }
