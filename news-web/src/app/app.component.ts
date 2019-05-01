@@ -12,7 +12,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements AfterViewInit {
-  public title = 'Azure community PL news aggregator';
+  public title = 'Azure news';
 
   constructor(private spinner: NgxSpinnerService) {
   }
