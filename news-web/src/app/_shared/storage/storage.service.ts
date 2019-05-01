@@ -3,7 +3,7 @@ import { HttpHeaders } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
-import { ODataClient, ODataFilter, ODataFilterExpression } from '../odata';
+import { ODataClient, ODataFilter, ODataFilterExpression, ODataQuery } from '../odata';
 import { environment } from '../../../environments/environment';
 
 import { StorageConnectionDto } from '../api';
@@ -15,14 +15,15 @@ export class StorageService {
     }
 
     public getNews(dto: StorageConnectionDto, ticks: number): Observable<NewsResponseDto> {
-        const filters: ODataFilter[] = [
+        const query: ODataQuery = {
+            filters: [
             {
                 key: 'PartitionKey',
                 expression: ODataFilterExpression.Equals,
                 value: `${ticks}`
             }
-        ];
-        return this.client.get<NewsResponseDto>(this.getRequestUri(dto), filters, this.getHttpHeaders());
+        ]};
+        return this.client.get<NewsResponseDto>(this.getRequestUri(dto), query, this.getHttpHeaders());
     }
 
     // $filter=PartitionKey%20eq%20'2518458912000000000'&
