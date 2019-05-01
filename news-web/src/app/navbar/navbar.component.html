@@ -1,22 +1,19 @@
 <header>
-  <nav class="navbar navbar-expand-md fixed-top bg-light my-2 my-md-0 mr-md-3">
-   <h4 class="my-0 mr-md-auto font-weight-normal">{{ title }}</h4>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse"
-      aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
-      <ul class="navbar-nav mr-auto">
-      </ul>
-      <div class="mt-2 mt-md-0">
-        <a class="p-2 text-dark" routerLink="">
-          <i class="fas fa-home"></i>
-        </a>
-        <button type="button" class="btn" *ngIf="(!!(service.user | async)) === false" (click)="login();">
-          <i class="fab fa-facebook"></i>
-        </button>
-        <img class="user-avatar" *ngIf="(service.userPicture | async) as picture" [src]="picture.url">
-      </div>
+  <nav class="navbar navbar-expand-md fixed-top bg-light px-8 py-8">
+    <div class="container-fluid">
+      <h4 class="my-0 mr-md-auto font-weight-normal">{{ title }}</h4>
+    </div>
+    <div class="container-fluid">
+      <a class="nav-link p-2 text-dark" routerLink="">
+        <i class="fas fa-home"></i>
+      </a>      
+      <a class="nav-link p-2 text-dark" routerLink="">
+          <i class="fas fa-info-circle"></i>
+      </a>
+      <button type="button" class="btn" *ngIf="(!!(service.user | async)) === false" (click)="login();">
+        <i class="fab fa-facebook"></i>
+      </button>
+      <img class="user-avatar" *ngIf="(service.userPicture | async) as picture" [src]="picture.url">
     </div>
   </nav>
 </header>

@@ -46,6 +46,14 @@ provider "cloudflare" {
   token = "${var.CLOUDFLARE_TOKEN}"
 }
 
+data "cloudflare_zones" "zone" {
+  filter {
+    name   = "${var.zone}"
+    status = "active"
+    paused = false
+  }
+}
+
 resource "cloudflare_zone_settings_override" "zone" {
   name = "${var.zone}"
 
@@ -64,16 +72,27 @@ resource "cloudflare_record" "domain" {
   proxied = true
 }
 
-resource "cloudflare_worker_script" "workerjs" {
-  zone    = "${var.zone}"
-  content = "${file("worker.js")}"
+resource "null_resource" "cloudflare_worker" {
+  triggers {
+    build_number = "${timestamp()}"
+  }
+
+  provisioner "local-exec" {
+    command = <<REQUEST
+curl -X PUT "https://api.cloudflare.com/client/v4/zones/40807004102a697a69f83bf88f26b64f/workers/script" \
+  -H "X-Auth-Email: ${var.CLOUDFLARE_EMAIL}" \
+  -H "X-Auth-Key: ${var.CLOUDFLARE_TOKEN}" \
+  -F "metadata=@metadata.json;type=application/json" \
+  -F "script=@worker.js;type=application/javascript"
+REQUEST
+  }
 }
 
 resource "cloudflare_worker_route" "route" {
   zone       = "${var.zone}"
   pattern    = "${terraform.workspace}.${var.zone}/*"
   enabled    = true
-  depends_on = ["cloudflare_worker_script.workerjs"]
+  depends_on = ["null_resource.cloudflare_worker"]
 }
 
 resource "null_resource" "cloudflare_kv_settings" {
@@ -90,7 +109,7 @@ curl "https://api.cloudflare.com/client/v4/accounts/${var.cf_account_id}/storage
 --data '{
 	"api": "${azurerm_function_app.functions.default_hostname}",
 	"spa" : "${azurerm_storage_account.storage.primary_web_host}",
-	"storage" : "${azurerm_storage_account.storage.primary_table_host}
+	"storage" : "${azurerm_storage_account.storage.primary_table_host}"
     }'
 REQUEST
   }
