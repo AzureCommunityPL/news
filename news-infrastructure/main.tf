@@ -216,8 +216,8 @@ resource "azurerm_template_deployment" "logicapp" {
     "storageAccountName"     = "${azurerm_storage_account.storage.name}"
     "storageAccountKey"      = "${azurerm_storage_account.storage.primary_access_key}"
     "rssApiConnectionName"   = "rss"
-    "logicAppName"           = "${terraform.workspace}-news-la-azure-blog"
-    "feedUrls"                = ["https://azurecomcdn.azureedge.net/en-us/blog/feed/"]
+    "logicAppName"           = "${terraform.workspace}-news-la"
+    "feedUrls"               = "https://azurecomcdn.azureedge.net/en-us/blog/feed/"
   }
 
   depends_on = [

@@ -42,19 +42,21 @@
             },
             "defaultValue": "logicAppName"
         },
-        "feedUrls": {
-            "type": "array",
+        "feedUrlList": {
+            "type": "string",
+            "minLength": 1,
             "metadata": {
-                "description": "array of URLs to RSS feeds"
+                "description": "List of URLs to RSS feeds separated by commas"
             },
-            "defaultValue": [ "feedUrl" ]
+            "defaultValue": "feedUrl"
         }
     },
     "variables": {
         "rssConnectionResourceId": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Web/connections/', parameters('rssApiConnectionName'))]",
         "rssConnectionApiId": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/rss')]",
         "queueConnectionResourceId": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Web/connections/', parameters('queueApiConnectionName'))]",
-        "queueConnectionApiId": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/azurequeues')]"
+        "queueConnectionApiId": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/azurequeues')]",
+        "feedUrls": "[split(parameters('feedUrlList'),',')]"
     },
     "resources": [
         {
@@ -98,7 +100,7 @@
             ],
             "copy": { 
                 "name": "logicappscopy", 
-                "count": "[length(parameters('feedUrls'))]" 
+                "count": "[length(variables('feedUrls'))]" 
              }, 
             "properties": {
                 "state": "Enabled",
@@ -139,7 +141,7 @@
                                 "method": "get",
                                 "path": "/OnNewFeed",
                                 "queries": {
-                                    "feedUrl": "[parameters('feedUrls')[copyIndex()]]"
+                                    "feedUrl": "[variables('feedUrls')[copyIndex()]]"
                                 }
                             },
                             "recurrence": {
