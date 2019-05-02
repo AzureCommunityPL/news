@@ -42,11 +42,11 @@
             },
             "defaultValue": "logicAppName"
         },
-        "feedUrl": {
+        "feedUrlList": {
             "type": "string",
             "minLength": 1,
             "metadata": {
-                "description": "URL to RSS feed"
+                "description": "List of URLs to RSS feeds separated by commas"
             },
             "defaultValue": "feedUrl"
         }
@@ -55,7 +55,8 @@
         "rssConnectionResourceId": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Web/connections/', parameters('rssApiConnectionName'))]",
         "rssConnectionApiId": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/rss')]",
         "queueConnectionResourceId": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Web/connections/', parameters('queueApiConnectionName'))]",
-        "queueConnectionApiId": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/azurequeues')]"
+        "queueConnectionApiId": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/azurequeues')]",
+        "feedUrls": "[split(parameters('feedUrlList'),',')]"
     },
     "resources": [
         {
@@ -91,12 +92,16 @@
         {
             "type": "Microsoft.Logic/workflows",
             "apiVersion": "2017-07-01",
-            "name": "[parameters('logicAppName')]",
+            "name": "[concat(parameters('logicAppName'),'-',padLeft(copyIndex(),3,'0'))]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Web/connections', parameters('rssApiConnectionName'))]",
                 "[resourceId('Microsoft.Web/connections', parameters('queueApiConnectionName'))]"
             ],
+            "copy": { 
+                "name": "logicappscopy", 
+                "count": "[length(variables('feedUrls'))]" 
+             }, 
             "properties": {
                 "state": "Enabled",
                 "definition": {
@@ -136,7 +141,7 @@
                                 "method": "get",
                                 "path": "/OnNewFeed",
                                 "queries": {
-                                    "feedUrl": "https://azurecomcdn.azureedge.net/en-us/blog/feed/"
+                                    "feedUrl": "[variables('feedUrls')[copyIndex()]]"
                                 }
                             },
                             "recurrence": {
