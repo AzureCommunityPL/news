@@ -26,7 +26,6 @@ export class NewsService {
     public getNews(ticks: number): Observable<NewsModel[]> {
         return this.api.getStorageConnection()
             .pipe(
-                tap(x => console.log('getting news for:', ticks)),
                 switchMap(x => this.odata.getNews(x, ticks)),
                 map(x => this.mapAsNewsModel(x)));
     }
