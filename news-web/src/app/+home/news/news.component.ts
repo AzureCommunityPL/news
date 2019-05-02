@@ -48,13 +48,10 @@ export class NewsComponent implements AfterViewInit, OnDestroy {
     this.dateSubject
       .pipe(
         takeUntil(this.unsubscribe),
-        // tap(x => console.log('date subject: ', x)),
         filter(x => x !== undefined),
         tap(x => this.spinner.show()),
-        // tap(x => console.log('loading news from: ', x)),
         map(date => this.dateService.getTicks(date)),
         switchMap(ticks => this.service.getNews(ticks)))
-        // tap(x => console.log('receive: ', x)))
       .subscribe(value => {
         this.news = value;
         this.spinner.hide();
