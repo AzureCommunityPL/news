@@ -42,13 +42,12 @@
             },
             "defaultValue": "logicAppName"
         },
-        "feedUrl": {
-            "type": "string",
-            "minLength": 1,
+        "feedUrls": {
+            "type": "array",
             "metadata": {
-                "description": "URL to RSS feed"
+                "description": "array of URLs to RSS feeds"
             },
-            "defaultValue": "feedUrl"
+            "defaultValue": [ "feedUrl" ]
         }
     },
     "variables": {
@@ -91,12 +90,16 @@
         {
             "type": "Microsoft.Logic/workflows",
             "apiVersion": "2017-07-01",
-            "name": "[parameters('logicAppName')]",
+            "name": "[concat(parameters('logicAppName'),'-',padLeft(copyIndex(),3,'0'))]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Web/connections', parameters('rssApiConnectionName'))]",
                 "[resourceId('Microsoft.Web/connections', parameters('queueApiConnectionName'))]"
             ],
+            "copy": { 
+                "name": "logicappscopy", 
+                "count": "[length(parameters('feedUrls'))]" 
+             }, 
             "properties": {
                 "state": "Enabled",
                 "definition": {
