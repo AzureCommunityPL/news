@@ -41,20 +41,32 @@ export class NewsComponent implements AfterViewInit, OnDestroy {
     this.initSubject
       .pipe(
       takeUntil(this.unsubscribe),
-      tap(x => this.spinner.show()),
-      switchMap(x => this.service.getLatestNewsDate()))
+        tap(x => this.spinner.show()),
+        switchMap(x => this.service.getLatestNewsDate()))
       .subscribe(this.dateSubject);
 
     this.dateSubject
       .pipe(
-      takeUntil(this.unsubscribe),
-      tap(x => console.log('date subject: ', x)),
-      filter(x => x !== undefined),
-      tap(x => this.spinner.show()),
-      tap(x => console.log('loading news from: ', x)),
-      map(date => this.dateService.getTicks(date)),
-      switchMap(ticks => this.service.getNews(ticks)),
-      tap(x => console.log('receive: ', x)));
+        takeUntil(this.unsubscribe),
+        // tap(x => console.log('date subject: ', x)),
+        filter(x => x !== undefined),
+        tap(x => this.spinner.show()),
+        // tap(x => console.log('loading news from: ', x)),
+        map(date => this.dateService.getTicks(date)),
+        switchMap(ticks => this.service.getNews(ticks)))
+        // tap(x => console.log('receive: ', x)))
+      .subscribe(value => {
+        this.news = value;
+        this.spinner.hide();
+
+        if (!Array.isArray(value) || !value.length) {
+          this.toastr.warning('No results were found, try another date', 'No results');
+        }
+      }, e => {
+        this.spinner.hide();
+        this.toastr.error(e.Message, 'Failed to retrieve news');
+        console.error(e);
+      });
   }
 
   public ngAfterViewInit(): void {
@@ -63,25 +75,5 @@ export class NewsComponent implements AfterViewInit, OnDestroy {
 
   public ngOnDestroy(): void {
     this.unsubscribe.next();
-  }
-
-  private onNewsNext(value: NewsModel[]): void {
-    console.log('news received: ', value);
-    try {
-      this.news = value;
-      this.spinner.hide();
-
-      if (!Array.isArray(value) || !value.length) {
-        this.toastr.warning('No results were found, try another date', 'No results');
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  private onNewsError(e: any): void {
-    this.spinner.hide();
-    this.toastr.error(e.Message, 'Failed to retrieve news');
-    console.error(e);
   }
 }

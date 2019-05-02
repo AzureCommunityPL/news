@@ -20,20 +20,17 @@ export class NewsService {
     public getLatestNewsDate(): Observable<Date> {
         return this.api.getStorageConnection()
         .pipe(
-            switchMap(x => this.odata.getLatestNewsDate(x)),
-            tap(x => console.log('retrieved last news date:', x)));
+            switchMap(x => this.odata.getLatestNewsDate(x)));
     }
 
     public getNews(ticks: number): Observable<NewsModel[]> {
         return this.api.getStorageConnection()
             .pipe(
-                tap(x => console.log('getting news for:', ticks)),
                 switchMap(x => this.odata.getNews(x, ticks)),
                 map(x => this.mapAsNewsModel(x)));
     }
 
     private mapAsNewsModel(response: NewsResponseDto): NewsModel[] {
-        console.log('mapping response: ', response);
         return response.value.map<NewsModel>(x => ({
             title: x.Title,
             url: x.Url,
