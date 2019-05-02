@@ -2,8 +2,7 @@
     <div class="row top-pager">
         <form>
             <div class="form-group">
-                <input name="datepicker" [(ngModel)]="date"
-                    type="text" placeholder="Datepicker" class="form-control" bsDatepicker>
+                <input name="datepicker" [(ngModel)]="date" type="text" placeholder="Datepicker" class="form-control" bsDatepicker>
             </div>
         </form>
     </div>
@@ -14,11 +13,13 @@
                 <p> {{ item.summary }}</p>
             </div>
             <div class="form-group">
-                <a [href]="item.url">link</a>
+                
             </div>
-            <button type="submit" class="btn btn-primary">
-                <i class="fa fa-user-plus"></i>
-            </button>
+            <div class="news-item--form-group-bottom">
+                <span><i class="fas fa-link"><a [href]="item.url">link</a></i></span>
+                <span><i class="far fa-comment">No comments yet</i></span>
+                <span><i class="far fa-thumbs-up">No likes yet</i></span>
+            </div>
         </form>
     </div>
 </div>

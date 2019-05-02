@@ -6,3 +6,16 @@
     padding-top: 2em;
     padding-bottom: 2em;
 }
+
+.news-item--form-group-bottom {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    span {
+        i::before {
+            margin-right: 1em;
+        }
+    }
+}
+
