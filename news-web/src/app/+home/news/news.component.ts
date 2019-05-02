@@ -3,13 +3,14 @@ import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 
 // rxjs
 import { Subject, BehaviorSubject } from 'rxjs';
-import { takeUntil, switchMap, map, tap, catchError, finalize } from 'rxjs/operators';
+import { takeUntil, switchMap, map, tap, catchError, filter } from 'rxjs/operators';
 
 import { NewsService } from './news.service';
 import { NewsModel } from './news.model';
 import { DateService } from '../../_shared/utils';
 import { SpinnerService } from '../../_shared/spinner/spinner.service';
 import { ToastrService } from '../../_shared/toastr';
+import { makeAnimationEvent } from '@angular/animations/browser/src/render/shared';
 
 @Component({
   selector: 'app-news',
@@ -17,48 +18,70 @@ import { ToastrService } from '../../_shared/toastr';
   styleUrls: ['./news.component.scss']
 })
 export class NewsComponent implements AfterViewInit, OnDestroy {
-    public news: NewsModel[] = [];
-    public totalItems = 30;
+  public news: NewsModel[] = [];
+  public totalItems = 30;
 
-    private dateSubject: BehaviorSubject<Date> = new BehaviorSubject(new Date());
+  private initSubject: Subject<void> = new Subject<void>();
+  private dateSubject: BehaviorSubject<Date> = new BehaviorSubject(undefined);
 
-    public get date(): Date {
-      return this.dateSubject.getValue();
+  public get date(): Date {
+    return this.dateSubject.getValue();
+  }
+  public set date(value: Date) {
+    this.dateSubject.next(value);
+  }
+
+  private unsubscribe: Subject<void> = new Subject<void>();
+
+  constructor(
+    private service: NewsService,
+    private dateService: DateService,
+    private spinner: SpinnerService,
+    private toastr: ToastrService) {
+    this.initSubject
+      .pipe(
+      takeUntil(this.unsubscribe),
+      tap(x => this.spinner.show()),
+      switchMap(x => this.service.getLatestNewsDate()))
+      .subscribe(this.dateSubject);
+
+    this.dateSubject
+      .pipe(
+      takeUntil(this.unsubscribe),
+      tap(x => console.log('date subject: ', x)),
+      filter(x => x !== undefined),
+      tap(x => this.spinner.show()),
+      tap(x => console.log('loading news from: ', x)),
+      map(date => this.dateService.getTicks(date)),
+      switchMap(ticks => this.service.getNews(ticks)),
+      tap(x => console.log('receive: ', x)));
+  }
+
+  public ngAfterViewInit(): void {
+    this.initSubject.next();
+  }
+
+  public ngOnDestroy(): void {
+    this.unsubscribe.next();
+  }
+
+  private onNewsNext(value: NewsModel[]): void {
+    console.log('news received: ', value);
+    try {
+      this.news = value;
+      this.spinner.hide();
+
+      if (!Array.isArray(value) || !value.length) {
+        this.toastr.warning('No results were found, try another date', 'No results');
+      }
+    } catch (e) {
+      console.log(e);
     }
-    public set date(value: Date) {
-      this.dateSubject.next(value);
-    }
+  }
 
-    private unsubscribe: Subject<void> = new Subject<void>();
-
-    constructor(
-      private service: NewsService,
-      private dateService: DateService,
-      private spinner: SpinnerService,
-      private toastr: ToastrService) {
-    }
-
-    public ngAfterViewInit(): void {
-      this.dateSubject
-        .pipe(
-          takeUntil(this.unsubscribe),
-          tap(x => this.spinner.show()),
-          map(date => this.dateService.getTicks(date)),
-          switchMap(ticks => this.service.getNews(ticks)))
-        .subscribe(x => {
-          this.news = x;
-          this.spinner.hide();
-
-          if (!Array.isArray(x) || !x.length) {
-            this.toastr.warning('No results were found, try another date', 'No results');
-          }
-        }, (e) => {
-          this.spinner.hide();
-          this.toastr.error(e.Message, 'Failed to retrieve news');
-        });
-    }
-
-    public ngOnDestroy(): void {
-      this.unsubscribe.next();
-    }
+  private onNewsError(e: any): void {
+    this.spinner.hide();
+    this.toastr.error(e.Message, 'Failed to retrieve news');
+    console.error(e);
+  }
 }
