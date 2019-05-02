@@ -30,3 +30,27 @@ export interface ODataFilter {
     expression: ODataFilterExpression;
     value: string;
 }
+
+export interface ODataQuery {
+    filters?: ODataFilter[];
+    select?: string[];
+    top?: number;
+}
+
+/**
+ * Represents an Azure table storage OData response
+ */
+export interface ODataResponseDto<T extends ODataValueDto> {
+    'odata.metadata': string;
+    value: T[];
+}
+
+/**
+ * Represents an Azure table storage row response
+ */
+export interface ODataValueDto {
+    'odata.etag': string;
+    PartitionKey: string;
+    RowKey?: string;
+    TimeStamp?: Date;
+}
