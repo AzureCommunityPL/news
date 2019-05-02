@@ -139,7 +139,7 @@
                                 "method": "get",
                                 "path": "/OnNewFeed",
                                 "queries": {
-                                    "feedUrl": "https://azurecomcdn.azureedge.net/en-us/blog/feed/"
+                                    "feedUrl": "[parameters('feedUrls')[copyIndex()]]"
                                 }
                             },
                             "recurrence": {
