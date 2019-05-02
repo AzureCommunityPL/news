@@ -17,12 +17,16 @@ export class NewsService {
         private odata: StorageService) {
     }
 
+    public getLatestNewsDate(): Observable<Date> {
+        return this.api.getStorageConnection()
+        .pipe(
+            switchMap(x => this.odata.getLatestNewsDate(x)));
+    }
+
     public getNews(ticks: number): Observable<NewsModel[]> {
         return this.api.getStorageConnection()
             .pipe(
                 switchMap(x => this.odata.getNews(x, ticks)),
-                publishReplay(1),
-                refCount(),
                 map(x => this.mapAsNewsModel(x)));
     }
 
