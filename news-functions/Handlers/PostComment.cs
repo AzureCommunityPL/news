@@ -22,18 +22,18 @@ namespace NewsFunctions.Handlers
         [FunctionName(nameof(PostComment))]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
-            [Table("%TableStorage-Name%", Connection = "AccountStorage-Conn")]CloudTable collector,
+            [Table("comments", Connection = "AccountStorage-Conn")]CloudTable collector,
             CancellationToken cancellationToken,
             ILogger log)
         {
             try
             {
                 log.LogInformation("C# HTTP trigger function processed a request.");
-                
+
                 if (req.Headers.TryGetValue("access_token", out var accessToken))
                 {
                     log.LogInformation("Validating fb token");
-                    var fbUser = await FacebookTokenValidation.IsTokenValid(accessToken,cancellationToken);
+                    var fbUser = await FacebookTokenValidation.IsTokenValid(accessToken, cancellationToken);
                     log.LogInformation($"Valid fb token, received userId : {fbUser.Id}");
 
                     log.LogInformation($"Reading body");
@@ -47,32 +47,32 @@ namespace NewsFunctions.Handlers
                     log.LogInformation($"Received body : {body}, trying to deserialize");
                     var comment = JsonConvert.DeserializeObject<CommentDto>(body);
 
-                    var partitionKey = DateTimeHelper.InvertTicks(comment.PostDateTime);
-                    var rowKey = $"{comment.PostId}~comment~{fbUser.Id}";
+                    var partitionKey = comment.PostId;
+                    var rowKey = $"{fbUser.Id}";
                     log.LogInformation($"Deserialized, trying insert or replace comment, partitionKey: {partitionKey}, rowKey: {rowKey}");
                     await collector.ExecuteAsync(
                        TableOperation.InsertOrReplace(new CommentTable
-                        {
-                            PartitionKey= partitionKey,
-                            RowKey = rowKey,
-                            Comment =  comment.Comment,
-                            Title = comment.Title
+                       {
+                           PartitionKey = partitionKey,
+                           RowKey = rowKey,
+                           Comment = comment.Comment,
+                           Title = comment.Title
                        }));
 
                     log.LogInformation("Done");
-                    return  new OkResult();
+                    return new OkResult();
                 }
 
                 return new UnauthorizedResult();
             }
-            catch (HttpRequestException ex) when(ex.Message.Contains("401"))
+            catch (HttpRequestException ex) when (ex.Message.Contains("401"))
             {
                 return new UnauthorizedResult();
             }
             catch (HttpRequestException ex) when (ex.Message.Contains("404"))
             {
                 return new NotFoundResult();
-            }            
+            }
         }
     }
 }

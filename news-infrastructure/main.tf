@@ -143,6 +143,18 @@ resource "azurerm_storage_table" "news" {
   storage_account_name = "${azurerm_storage_account.storage.name}"
 }
 
+resource "azurerm_storage_table" "comments" {
+  name                 = "comments"
+  resource_group_name  = "${azurerm_resource_group.rg.name}"
+  storage_account_name = "${azurerm_storage_account.storage.name}"
+}
+
+resource "azurerm_storage_table" "likes" {
+  name                 = "likes"
+  resource_group_name  = "${azurerm_resource_group.rg.name}"
+  storage_account_name = "${azurerm_storage_account.storage.name}"
+}
+
 resource "azurerm_storage_queue" "news" {
   name                 = "news"
   resource_group_name  = "${azurerm_resource_group.rg.name}"
@@ -178,8 +190,6 @@ resource "azurerm_function_app" "functions" {
   ]
 
   app_settings = {
-    "TableStorage-Name"              = "${azurerm_storage_table.news.name}"
-    "Queue-Name"                     = "${azurerm_storage_queue.news.name}"
     "APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.appinsights.instrumentation_key}"
     "AccountStorage-Name"            = "${azurerm_storage_account.storage.name}"
     "WEBSITE_RUN_FROM_PACKAGE"       = "1"
