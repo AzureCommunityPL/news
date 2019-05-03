@@ -5,33 +5,9 @@
         "name": {
             "type": "string",
             "defaultValue": "name"
-        },
-        "facebookAppId": {
-            "type": "string",
-            "defaultValue": "facebookAppId"
-        },
-        "facebookAppSecret": {
-            "type": "securestring",
-            "defaultValue": "facebookAppSecret"
         }
     },
     "resources": [
-        {
-            "name": "[concat(parameters('name'), '/authsettings')]",
-            "apiVersion": "2016-08-01",
-            "type": "Microsoft.Web/sites/config",
-            "location": "[resourceGroup().location]",
-            "properties": {
-                "enabled": true,
-                "tokenStoreEnabled": true,
-                "unauthenticatedClientAction": "AllowAnonymous", 
-                "facebookAppId": "[parameters('facebookAppId')]",
-                "facebookAppSecret": "[parameters('facebookAppSecret')]",
-                "facebookOAuthScopes": [
-                    "public_profile"
-                ]
-            }
-        },
         {
             "comments": "CORS allow origins *.",
             "type": "Microsoft.Web/sites/config",

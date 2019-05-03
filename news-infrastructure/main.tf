@@ -13,14 +13,6 @@ variable "zone" {
   default = "azurenews.pl"
 }
 
-variable "FACEBOOKAPPID" {
-  type = "string"
-}
-
-variable "FACEBOOKAPPSECRET" {
-  type = "string"
-}
-
 variable "cf_account_id" {
   "default" = "d5b58a2229c11224b000073d2b8e33d3"
   type      = "string"
@@ -204,9 +196,7 @@ resource "azurerm_template_deployment" "function-settings" {
   template_body = "${file("function-settings.json")}"
 
   parameters {
-    "name"              = "${azurerm_function_app.functions.name}"
-    "facebookAppId"     = "${var.FACEBOOKAPPID}"
-    "facebookAppSecret" = "${var.FACEBOOKAPPSECRET}"
+    "name" = "${azurerm_function_app.functions.name}"
   }
 
   depends_on = [
