@@ -32,30 +32,35 @@ namespace NewsFunctions.Handlers
                 
                 if (req.Headers.TryGetValue("access_token", out var accessToken))
                 {
-                    var isValid = await FacebookTokenValidation.IsTokenValid(accessToken);
-                    if (isValid == false)
-                    {
-                        log.LogInformation("Wrong token");
-                        return new UnauthorizedResult();
-                    }
+                    log.LogInformation("Validating fb token");
+                    var fbUser = await FacebookTokenValidation.IsTokenValid(accessToken,cancellationToken);
+                    log.LogInformation($"Valid fb token, received userId : {fbUser.Id}");
 
+                    log.LogInformation($"Reading body");
                     var body = await new StreamReader(req.Body).ReadToEndAsync();
                     if (string.IsNullOrWhiteSpace(body))
                     {
+                        log.LogWarning($"Empty Body");
                         return new BadRequestResult();
                     }
+
+                    log.LogInformation($"Received body : {body}, trying to deserialize");
                     var comment = JsonConvert.DeserializeObject<CommentDto>(body);
 
-
-                   await collector.ExecuteAsync(
+                    var partitionKey = DateTimeHelper.InvertTicks(comment.PostDateTime);
+                    var rowKey = $"{comment.PostId}~comment~{fbUser.Id}";
+                    log.LogInformation($"Deserialized, trying insert or replace comment, partitionKey: {partitionKey}, rowKey: {rowKey}");
+                    await collector.ExecuteAsync(
                        TableOperation.InsertOrReplace(new CommentTable
                         {
-                            PartitionKey= DateTimeHelper.InvertTicks(comment.PostDateTime),
-                            RowKey = $"{comment.PostId}/comment/{comment.FbUserId}",
+                            PartitionKey= partitionKey,
+                            RowKey = rowKey,
                             Comment =  comment.Comment,
                             Title = comment.Title
                        }));
 
+                    log.LogInformation("Done");
+                    return  new OkResult();
                 }
 
                 return new UnauthorizedResult();

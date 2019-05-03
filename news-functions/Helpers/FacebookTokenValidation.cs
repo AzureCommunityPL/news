@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Primitives;
+using NewsFunctions.Models;
+using Newtonsoft.Json;
 
 namespace NewsFunctions.Helpers
 {
@@ -12,11 +15,22 @@ namespace NewsFunctions.Helpers
         public const string AccessToken = "access_token";
         private static HttpClient _httpClient = new HttpClient();
 
-        public static async Task<bool> IsTokenValid(StringValues token)
+        public static async Task<FacebookProfileDto> IsTokenValid(StringValues token, CancellationToken cancellationToken)
         {
-            var status = await _httpClient.GetAsync(new Uri($"https://graph.facebook.com/me?access_token={token}"));
+            var graphResponse = await _httpClient.SendAsync(new HttpRequestMessage()
+            {
+                RequestUri = new Uri("https://graph.facebook.com/v3.3/me?fields=id,name"),
+                Method = HttpMethod.Get,
+                Headers = { { "Authorization", $"Bearer {token.ToString()}" } }
+            }, cancellationToken);
 
-            return status.IsSuccessStatusCode;
+            graphResponse.EnsureSuccessStatusCode();
+
+            var graphContent = await graphResponse.Content.ReadAsStringAsync();
+
+            var fbProfile = JsonConvert.DeserializeObject<FacebookProfileDto>(graphContent);
+
+            return fbProfile;
         }
     }
 }
