@@ -20,7 +20,7 @@ namespace NewsFunctions.Handlers
         [FunctionName(nameof(Unlike))]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
-            [Table("news", Connection = "AccountStorage-Conn")] CloudTable cloudTable,
+            [Table("likes", Connection = "AccountStorage-Conn")] CloudTable cloudTable,
             CancellationToken cancellationToken,
             ILogger log)
         {
