@@ -8,6 +8,5 @@ namespace NewsFunctions.Models
     {
         public DateTime PostDate { get; set; }
         public string PostId { get; set; }
-        public string FbUserId { get; set; }
     }
 }
