@@ -26,42 +26,39 @@ namespace NewsFunctions.Handlers
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            try
+            var policy = new SharedAccessTablePolicy()
             {
-                var policy = new SharedAccessTablePolicy()
-                {
-                    SharedAccessExpiryTime = DateTime.UtcNow.AddDays(1),
-                    Permissions = SharedAccessTablePermissions.Query
-                };
-                log.LogInformation("created sas policy");
+                SharedAccessExpiryTime = DateTime.UtcNow.AddDays(1),
+                Permissions = SharedAccessTablePermissions.Query
+            };
+            log.LogInformation("created sas policy");
 
-                var storageAccount = CloudStorageAccount.Parse(EnvironmentHelper.GetEnv("AccountStorage-Conn"));
-                var tableClient = storageAccount.CreateCloudTableClient() ??
-                                  throw new Exception(nameof(storageAccount.CreateCloudTableClient));
-                log.LogInformation($"Connected to storage account");
+            var storageAccount = CloudStorageAccount.Parse(EnvironmentHelper.GetEnv("AccountStorage-Conn"));
+            var tableClient = storageAccount.CreateCloudTableClient() ??
+                              throw new Exception(nameof(storageAccount.CreateCloudTableClient));
+            log.LogInformation($"Connected to storage account");
 
-                var table = tableClient.GetTableReference(tableName);
-                log.LogInformation($"Connected to table {tableName}");
-
-                var sasToken = table.GetSharedAccessSignature(policy);
-                log.LogInformation($"Generated sas token {sasToken}");
-
-                if (string.IsNullOrEmpty(sasToken))
-                {
-                    log.LogError("Token is null");
-                    throw new NullReferenceException("Token is null");
-                }
-
-                return new OkObjectResult(new
-                {
-                    sas = sasToken,
-                    name = tableName
-                });
-            }
-            catch (StorageException ex) when (ex.Message.Contains("Not Found"))
+            var table = tableClient.GetTableReference(tableName);
+            if (await table.ExistsAsync() == false)
             {
                 return new NotFoundObjectResult($"Table {tableName} doesn't exist");
             }
+            log.LogInformation($"Connected to table {tableName}");
+
+            var sasToken = table.GetSharedAccessSignature(policy);
+            log.LogInformation($"Generated sas token {sasToken}");
+
+            if (string.IsNullOrEmpty(sasToken))
+            {
+                log.LogError("Token is null");
+                throw new NullReferenceException("Token is null");
+            }
+
+            return new OkObjectResult(new
+            {
+                sas = sasToken,
+                name = tableName
+            });
         }
 
         [FunctionName("PartitionCount")]
@@ -98,16 +95,18 @@ namespace NewsFunctions.Handlers
 
                 } while (continuationToken != null);
                 log.LogInformation($"fetched all records");
-                
+
                 var numberGroups = list.GroupBy(p => p);
 
-                return new OkObjectResult(
-                    numberGroups.Select(grp => new
+                return new OkObjectResult(new
+                {
+                    values = numberGroups.Select(grp => new
                     {
                         partionKey = grp.Key,
                         count = grp.Count()
 
-                    }));
+                    })
+                });
             }
             catch (StorageException ex) when (ex.Message.Contains("Not Found"))
             {
