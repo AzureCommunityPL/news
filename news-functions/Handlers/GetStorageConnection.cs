@@ -16,9 +16,12 @@ namespace NewsFunctions.Handlers
 {
     public static class GetStorageConnection
     {
+        private const string _route = "{tableName}/token";
+
         [FunctionName(nameof(GetStorageConnection))]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)]HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = _route)]HttpRequest req,
+            string tableName,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
@@ -28,50 +31,30 @@ namespace NewsFunctions.Handlers
                 SharedAccessExpiryTime = DateTime.UtcNow.AddDays(1),
                 Permissions = SharedAccessTablePermissions.Query
             };
+            log.LogInformation("created sas policy");
 
             var storageAccount = CloudStorageAccount.Parse(EnvironmentHelper.GetEnv("AccountStorage-Conn"));
             var tableClient = storageAccount.CreateCloudTableClient() ??
                               throw new Exception(nameof(storageAccount.CreateCloudTableClient));
-            var table = tableClient.GetTableReference("news") ??
-                        throw new Exception(nameof(tableClient.GetTableReference));
+            log.LogInformation($"Connected to storage account");
+
+            var table = tableClient.GetTableReference(tableName);
+
+            log.LogInformation($"Connected to table {tableName}");
 
             var sasToken = table.GetSharedAccessSignature(policy);
-
+            log.LogInformation($"Generated sas token {sasToken}");
             if (string.IsNullOrEmpty(sasToken))
             {
+                log.LogError("Token is null");
                 throw new NullReferenceException("Token is null");
             }
 
-            var query = new TableQuery<NewsTable>().Select(new List<string>() { nameof(NewsTable.PartitionKey) });
-
-            var list = new List<string>();
-            TableContinuationToken continuationToken = null;
-            do
-            {
-                var resultSegment = await table.ExecuteQuerySegmentedAsync(query, continuationToken);
-                continuationToken = resultSegment.ContinuationToken;
-
-                foreach (var entity in resultSegment.Results.Distinct()
-                    .Where(l => list.Contains(l.PartitionKey) == false))
-                {
-                    list.Add(entity.PartitionKey);
-                }
-
-            } while (continuationToken != null);
-
             return new OkObjectResult(new
             {
-                sasToken = sasToken,
-                storageAddress = $"{table.Uri.Scheme}://{table.Uri.Host}",
-                tableName = "news",
-                partitionKeys = list.Select(l => new
-                {
-                    partitionKey = l,
-                    date = DateTimeHelper.GetDateFromPartition(l)
-                }).OrderByDescending(d => d.date)
+                sas = sasToken,
+                name = tableName
             });
         }
-
-        
     }
 }
