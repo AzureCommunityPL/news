@@ -108,6 +108,7 @@ export class CoreHttpClient {
    * @return An Observable stream containing the deserialized response object(s)
    */
   public post<T>(url: string, body: any, httpHeaders?: HttpHeaders): Observable<T> {
+    console.log('POST', url, body, httpHeaders);
     const observable: Observable<T> = this.client
       .post(url, body, { responseType: 'json', headers: httpHeaders })
       .pipe(
@@ -160,6 +161,7 @@ export class CoreHttpClient {
   }
 
   private handleError(response: HttpErrorResponse): Observable<HttpErrorResponse> {
+    console.error('HTTP ERROR', response);
     this.errorSubject.next(response);
     return of(response);
   }

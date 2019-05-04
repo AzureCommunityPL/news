@@ -17,8 +17,8 @@
                         </span>
                     </div>
                     <div class="pull-left float-left">
-                            <ngx-spinner [attr.name]="spinnerName" [fullScreen]="false" type="ball-pulse" size="small"></ngx-spinner>
-                        </div>
+                        <ngx-spinner [attr.name]="spinnerName" [fullScreen]="false" type="ball-pulse" size="small"></ngx-spinner>
+                    </div>
                 </button>
                 <div *ngFor="let userComment of comments" class="row">
                     <div class="col-1">
@@ -38,7 +38,7 @@
                 </div>
             </accordion-group>
             <accordion-group *ngIf="facebook.user | async">
-                <button class="btn btn-block btn-link clearfix" tooltip="Add comment" (click)="onAddComment()" accordion-heading>
+                <button class="btn btn-block btn-link clearfix" tooltip="Add comment" accordion-heading>
                     <div class="pull-left float-left">
                         <i class="far fa-comment"></i>
                     </div>
@@ -54,8 +54,8 @@
                                 <label for="commentInput">Comment</label>
                                 <input type="text" class="form-control" id="commentInout" aria-describedby="commentHelp" placeholder="Enter comment">
                                 <small id="commentHelp" class="form-text text-muted">Please share your comment (required)</small>
-                                <button class="btn btn-light float-right" tooltip="Create comment">
-                                    <i class="fas fa-paper-plane">Send</i>
+                                <button (click)="onAddComment()" class="btn btn-light float-right" tooltip="Create comment">
+                                    <i class="fas fa-paper-plane"></i>
                                 </button>
                             </div>
                         </form>

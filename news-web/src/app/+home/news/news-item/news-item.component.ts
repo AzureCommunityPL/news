@@ -8,7 +8,7 @@ import { SpinnerService } from '../../../_shared/spinner';
 
 import { NewsCommentModel } from '../news.model';
 import { NewsItemService } from './news-item.service';
-import { TableEntity, CommentModel } from './news-item.models';
+import { TableEntity, CommentModel, CommentEditModel } from './news-item.models';
 
 @Component({
   selector: 'app-news-item',
@@ -29,7 +29,7 @@ export class NewsItemComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject<void>();
 
   public comments: CommentModel[] = [];
-  private subject: Subject<void> = new Subject<void>();
+  private subject: Subject<CommentEditModel> = new Subject<CommentEditModel>();
   private commentSubject: Subject<TableEntity> = new Subject<TableEntity>();
 
   constructor(
@@ -39,11 +39,13 @@ export class NewsItemComponent implements OnInit, OnDestroy {
     this.subject
       .pipe(
       takeUntil(this.unsubscribe),
-      combineLatest(this.facebook.user, (_, user) => {
-        console.log('inside combineLatest: ', user);
-        return user;
+      combineLatest(this.facebook.user, (comment, user) => {
+        return this.service.postComment(comment, user);
       }))
-      .subscribe(x => console.log('sub: ', x));
+      .subscribe(x => {
+        console.log('post comment response: ', x);
+        this.refresh();
+      }, (e) => console.error('Failed to POST comment: ', e));
 
     this.commentSubject
       .pipe(
@@ -52,7 +54,6 @@ export class NewsItemComponent implements OnInit, OnDestroy {
         switchMap(entity => this.service.getComments(entity))
       )
       .subscribe(x => {
-        // this.spinner.hide(this.spinnerName);
         this.comments = x;
       });
   }
@@ -66,8 +67,12 @@ export class NewsItemComponent implements OnInit, OnDestroy {
   }
 
   public onAddComment(): void {
-    console.log('onAddComment called');
-    this.subject.next();
+    this.subject.next({
+      partitioningKey: this.partitioningKey,
+      rowKey: this.rowKey,
+      title: 'test',
+      comment: 'test'
+    });
   }
 
   private refresh(): void {

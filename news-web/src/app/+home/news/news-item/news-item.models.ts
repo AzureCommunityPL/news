@@ -9,8 +9,13 @@ export interface NewsItemModel extends TableEntity {
     url: string;
 }
 
-export interface CommentModel {
+export interface CommentModel extends TableEntity {
     title?: string;
     comment: string;
     userId: string;
+}
+
+export interface CommentEditModel extends TableEntity {
+    title?: string;
+    comment: string;
 }

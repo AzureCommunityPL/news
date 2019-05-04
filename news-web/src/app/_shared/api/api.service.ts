@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpHeaders } from '@angular/common/http';
+import { HttpHeaders, HttpResponse } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
@@ -7,6 +7,7 @@ import { CoreHttpClient } from '../http';
 import { environment } from '../../../environments/environment';
 
 import { StorageTokenDto, CommentDto } from './api.dto';
+import { FacebookUser } from '../facebook';
 
 @Injectable()
 export class ApiService {
@@ -18,11 +19,11 @@ export class ApiService {
             `/api/${tableName}/token`, this.getHttpHeaders());
     }
 
-    public postComment(id: string, dto: CommentDto): Observable<void> {
+    public postComment(id: string, dto: CommentDto, user: FacebookUser): Observable<HttpResponse<void>> {
         const headers = this.getHttpHeaders()
-            .append('access_token', '');
+            .append('access_token', user.token.value);
 
-        return this.client.post<void>(`/api/comment/${id}`, dto, headers);
+        return this.client.post<HttpResponse<void>>(`/api/comment/${id}`, dto, headers);
     }
 
     private getHttpHeaders(): HttpHeaders {
