@@ -10,5 +10,6 @@ export interface NewsModel {
 
 export interface NewsCommentModel {
     userId: string;
+    title?: string;
     comment: string;
 }

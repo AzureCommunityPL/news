@@ -3,3 +3,8 @@ export interface StorageConnectionDto {
     storageAddress: string;
     tableName: string;
 }
+
+export interface CommentDto {
+    title: string;
+    comment: string;
+}
