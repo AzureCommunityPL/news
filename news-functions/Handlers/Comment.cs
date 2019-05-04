@@ -145,11 +145,11 @@ namespace NewsFunctions.Handlers
 
             switch (httpMethod)
             {
-                case HttpOperation.Post:
+                case HttpOperation.Put:
                     log.LogInformation("Have chosen table operation Insert");
                     operation = TableOperation.Insert(tableEntity);
                     break;
-                case HttpOperation.Put:
+                case HttpOperation.Post:
                     log.LogInformation("Have chosen table operation Replace");
                     operation = TableOperation.Replace(tableEntity);
                     break;
