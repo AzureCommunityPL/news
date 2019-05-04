@@ -24,6 +24,7 @@ async function handleRequest(request) {
   return fetch(newUrl,
     {
       method: request.method,
-      headers: request.headers
+      headers: request.headers,
+      body: request.body
     });
 }
