@@ -16,7 +16,10 @@ export class NewsItemComponent {
   @Input() public title: string;
   @Input() public summary: string;
   @Input() public url: string;
-  @Input() public comments: NewsCommentModel[] = [
+  @Input() public partitioningKey: string;
+  @Input() public rowKey: string;
+
+  public comments: NewsCommentModel[] = [
     {
       userId: 'user1',
       // tslint:disable-next-line:max-line-length

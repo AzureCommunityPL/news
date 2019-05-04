@@ -9,6 +9,8 @@
     </div>
     <div class="row news-item" *ngFor="let item of news">
         <app-news-item
+            [partitioningKey]="item.partitioningKey"
+            [rowKey]="item.rowKey"
             [title]="item.title" 
             [summary]="item.summary" 
             [url]="item.url">
