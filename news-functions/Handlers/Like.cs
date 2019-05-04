@@ -22,7 +22,7 @@ namespace NewsFunctions.Handlers
         [FunctionName(nameof(Like))]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
-            [Table("%TableStorage-Name%", Connection = "AccountStorage-Conn")] CloudTable cloudTable,
+            [Table("likes", Connection = "AccountStorage-Conn")] CloudTable cloudTable,
             CancellationToken cancellationToken,
             ILogger log)
         {
@@ -45,8 +45,8 @@ namespace NewsFunctions.Handlers
                 var likeDto = JsonConvert.DeserializeObject<LikeDto>(body);
                 log.LogInformation("Deserialized");
 
-                var partitionKey = DateTimeHelper.InvertTicks(likeDto.PostDate);
-                var rowKey = $"{likeDto.PostId}~comment~{fbUser.Id}~like";
+                var partitionKey = likeDto.PostId;
+                var rowKey = fbUser.Id;
 
                 log.LogInformation($"Adding record :{partitionKey} - {rowKey} ");
                 await cloudTable.ExecuteAsync(TableOperation.InsertOrReplace(new TableEntity(partitionKey, rowKey)));

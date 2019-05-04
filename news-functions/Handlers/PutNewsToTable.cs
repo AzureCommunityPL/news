@@ -11,8 +11,8 @@ namespace NewsFunctions.Handlers
     {
         [FunctionName(nameof(PutNewsToTable))]
         public static async Task Run(
-            [QueueTrigger("%Queue-Name%", Connection = "AccountStorage-Conn")]string item,
-            [Table("%TableStorage-Name%", Connection = "AccountStorage-Conn")]IAsyncCollector<NewsTable> collector,
+            [QueueTrigger("news", Connection = "AccountStorage-Conn")]string item,
+            [Table("news", Connection = "AccountStorage-Conn")]IAsyncCollector<NewsTable> collector,
             ILogger log)
         {
             log.LogInformation($"C# Queue trigger function processed: {item}");

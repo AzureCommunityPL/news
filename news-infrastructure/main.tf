@@ -13,14 +13,6 @@ variable "zone" {
   default = "azurenews.pl"
 }
 
-variable "FACEBOOKAPPID" {
-  type = "string"
-}
-
-variable "FACEBOOKAPPSECRET" {
-  type = "string"
-}
-
 variable "cf_account_id" {
   "default" = "d5b58a2229c11224b000073d2b8e33d3"
   type      = "string"
@@ -143,6 +135,18 @@ resource "azurerm_storage_table" "news" {
   storage_account_name = "${azurerm_storage_account.storage.name}"
 }
 
+resource "azurerm_storage_table" "comments" {
+  name                 = "comments"
+  resource_group_name  = "${azurerm_resource_group.rg.name}"
+  storage_account_name = "${azurerm_storage_account.storage.name}"
+}
+
+resource "azurerm_storage_table" "likes" {
+  name                 = "likes"
+  resource_group_name  = "${azurerm_resource_group.rg.name}"
+  storage_account_name = "${azurerm_storage_account.storage.name}"
+}
+
 resource "azurerm_storage_queue" "news" {
   name                 = "news"
   resource_group_name  = "${azurerm_resource_group.rg.name}"
@@ -178,8 +182,6 @@ resource "azurerm_function_app" "functions" {
   ]
 
   app_settings = {
-    "TableStorage-Name"              = "${azurerm_storage_table.news.name}"
-    "Queue-Name"                     = "${azurerm_storage_queue.news.name}"
     "APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.appinsights.instrumentation_key}"
     "AccountStorage-Name"            = "${azurerm_storage_account.storage.name}"
     "WEBSITE_RUN_FROM_PACKAGE"       = "1"
@@ -194,9 +196,7 @@ resource "azurerm_template_deployment" "function-settings" {
   template_body = "${file("function-settings.json")}"
 
   parameters {
-    "name"              = "${azurerm_function_app.functions.name}"
-    "facebookAppId"     = "${var.FACEBOOKAPPID}"
-    "facebookAppSecret" = "${var.FACEBOOKAPPSECRET}"
+    "name" = "${azurerm_function_app.functions.name}"
   }
 
   depends_on = [

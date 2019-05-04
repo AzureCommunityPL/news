@@ -20,7 +20,7 @@ namespace NewsFunctions.Handlers
         [FunctionName(nameof(Unlike))]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
-            [Table("%TableStorage-Name%", Connection = "AccountStorage-Conn")] CloudTable cloudTable,
+            [Table("likes", Connection = "AccountStorage-Conn")] CloudTable cloudTable,
             CancellationToken cancellationToken,
             ILogger log)
         {
@@ -43,9 +43,9 @@ namespace NewsFunctions.Handlers
                 var likeDto = JsonConvert.DeserializeObject<LikeDto>(body);
                 log.LogInformation("Deserialized");
 
-                var partitionKey = DateTimeHelper.InvertTicks(likeDto.PostDate);
-                var rowKey = $"{likeDto.PostId}~comment~{fbUser.Id}~like";
-                
+                var partitionKey = likeDto.PostId;
+                var rowKey = fbUser.Id;
+
                 log.LogInformation($"Retrieving record by partitionKey: {partitionKey} and rowKey: {rowKey}");
                 var likeRecord = await cloudTable.Get<TableEntity>(partitionKey, rowKey);
 
@@ -58,7 +58,7 @@ namespace NewsFunctions.Handlers
                 else
                 {
                     log.LogInformation($"Not Found");
-                    return  new NotFoundResult();
+                    return new NotFoundResult();
                 }
 
                 log.LogInformation("Done");

@@ -22,7 +22,6 @@ namespace NewsFunctions.Handlers
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
-            var tableName = EnvironmentHelper.GetEnv("TableStorage-Name");
 
             var policy = new SharedAccessTablePolicy()
             {
@@ -33,7 +32,7 @@ namespace NewsFunctions.Handlers
             var storageAccount = CloudStorageAccount.Parse(EnvironmentHelper.GetEnv("AccountStorage-Conn"));
             var tableClient = storageAccount.CreateCloudTableClient() ??
                               throw new Exception(nameof(storageAccount.CreateCloudTableClient));
-            var table = tableClient.GetTableReference(tableName) ??
+            var table = tableClient.GetTableReference("news") ??
                         throw new Exception(nameof(tableClient.GetTableReference));
 
             var sasToken = table.GetSharedAccessSignature(policy);
@@ -64,7 +63,7 @@ namespace NewsFunctions.Handlers
             {
                 sasToken = sasToken,
                 storageAddress = $"{table.Uri.Scheme}://{table.Uri.Host}",
-                tableName = tableName,
+                tableName = "news",
                 partitionKeys = list.Select(l => new
                 {
                     partitionKey = l,

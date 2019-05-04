@@ -175,7 +175,7 @@ stages:
         scriptLocation: inlineScript
         inlineScript: |         
          az functionapp restart --name pr$(System.PullRequest.PullRequestNumber)-news-functions --resource-group pr$(System.PullRequest.PullRequestNumber)-news-app
-         curl --data "" -H "Authorization: Bearer $(az account get-access-token | jq ".accessToken" -r)" https://management.azure.com/subscriptions/$(az account show | jq ".id" -r)/resourceGroups/pr$(System.PullRequest.PullRequestNumber)-news-app/providers/Microsoft.Logic/workflows/pr$(System.PullRequest.PullRequestNumber)-news-la-azure-blog-initial-load/triggers/manual/run?api-version=2016-06-01
+         curl --data "" -H "Authorization: Bearer $(az account get-access-token | jq ".accessToken" -r)" https://management.azure.com/subscriptions/$(az account show | jq ".id" -r)/resourceGroups/pr$(System.PullRequest.PullRequestNumber)-news-app/providers/Microsoft.Logic/workflows/pr$(System.PullRequest.PullRequestNumber)-news-la-initial-load/triggers/manual/run?api-version=2016-06-01
 
   - job: Web
     pool:
