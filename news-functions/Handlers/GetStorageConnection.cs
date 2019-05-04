@@ -16,11 +16,11 @@ namespace NewsFunctions.Handlers
 {
     public static class GetStorageConnection
     {
-        private const string _route = "{tableName}/token";
+        private const string _route = "{tableName}/";
 
-        [FunctionName(nameof(GetStorageConnection))]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = _route)]HttpRequest req,
+        [FunctionName("AccessToken")]
+        public static async Task<IActionResult> Runtoken(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = _route + "token")]HttpRequest req,
             string tableName,
             ILogger log)
         {
@@ -41,8 +41,47 @@ namespace NewsFunctions.Handlers
                 log.LogInformation($"Connected to storage account");
 
                 var table = tableClient.GetTableReference(tableName);
+                log.LogInformation($"Connected to table {tableName}");
 
-                var query = new TableQuery<NewsTable>().Select(new List<string>() {nameof(NewsTable.PartitionKey)});
+                var sasToken = table.GetSharedAccessSignature(policy);
+                log.LogInformation($"Generated sas token {sasToken}");
+
+                if (string.IsNullOrEmpty(sasToken))
+                {
+                    log.LogError("Token is null");
+                    throw new NullReferenceException("Token is null");
+                }
+
+                return new OkObjectResult(new
+                {
+                    sas = sasToken,
+                    name = tableName
+                });
+            }
+            catch (StorageException ex) when (ex.Message.Contains("Not Found"))
+            {
+                return new NotFoundObjectResult($"Table {tableName} doesn't exist");
+            }
+        }
+
+        [FunctionName("PartitionCount")]
+        public static async Task<IActionResult> RunCount(
+           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = _route + "count")]HttpRequest req,
+           string tableName,
+           ILogger log)
+        {
+            log.LogInformation("C# HTTP trigger function processed a request.");
+
+            try
+            {
+                var storageAccount = CloudStorageAccount.Parse(EnvironmentHelper.GetEnv("AccountStorage-Conn"));
+                var tableClient = storageAccount.CreateCloudTableClient() ??
+                                  throw new Exception(nameof(storageAccount.CreateCloudTableClient));
+                log.LogInformation($"Connected to storage account");
+
+                var table = tableClient.GetTableReference(tableName);
+
+                var query = new TableQuery<NewsTable>().Select(new List<string>() { nameof(NewsTable.PartitionKey) });
 
                 var list = new List<string>();
                 TableContinuationToken continuationToken = null;
@@ -58,31 +97,17 @@ namespace NewsFunctions.Handlers
                     }
 
                 } while (continuationToken != null);
-
                 log.LogInformation($"fetched all records");
-
-                log.LogInformation($"Connected to table {tableName}");
+                
                 var numberGroups = list.GroupBy(p => p);
 
-                var sasToken = table.GetSharedAccessSignature(policy);
-                log.LogInformation($"Generated sas token {sasToken}");
-
-                if (string.IsNullOrEmpty(sasToken))
-                {
-                    log.LogError("Token is null");
-                    throw new NullReferenceException("Token is null");
-                }
-
-                return new OkObjectResult(new
-                {
-                    sas = sasToken,
-                    name = tableName,
-                    partionAggregation = numberGroups.Select(grp => new
+                return new OkObjectResult(
+                    numberGroups.Select(grp => new
                     {
                         partionKey = grp.Key,
                         count = grp.Count()
-                    })
-                });
+
+                    }));
             }
             catch (StorageException ex) when (ex.Message.Contains("Not Found"))
             {
