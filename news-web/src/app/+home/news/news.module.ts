@@ -1,18 +1,18 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 import { SharedModule } from '../../_shared';
 
 import { NewsComponent } from './news.component';
 import { NewsService } from './news.service';
+import { NewsItemModule } from './news-item/news-item.module';
 
 @NgModule({
     declarations: [
         NewsComponent
     ],
     imports: [
-        CommonModule,
-        SharedModule
+        SharedModule,
+        NewsItemModule
     ],
     providers: [
         NewsService

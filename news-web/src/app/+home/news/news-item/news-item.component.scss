@@ -1,0 +1,41 @@
+@import '../../../../styles.scss';
+
+h5 {
+    a {
+        color: $dark-text;
+    }
+}
+
+button.btn-link {
+    color: $dark-text;
+}
+
+div.card-body {
+    padding-left: 2rem !important;
+}
+
+div.comment-body {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-content: center;
+}
+
+.bd-placeholder-img {
+    font-size: 1.125rem;
+    text-anchor: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+// i::before {
+//     margin-right: 1rem;
+// }
+i {
+    margin-left: 0.75rem;
+}
+i:hover {
+    color: rgb(10, 9, 9);
+}
