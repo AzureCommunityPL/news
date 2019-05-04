@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../../_shared';
 
 import { NewsItemComponent } from './news-item.component';
+import { NewsItemService } from './news-item.service';
 
 @NgModule({
     declarations: [
@@ -14,6 +15,7 @@ import { NewsItemComponent } from './news-item.component';
         SharedModule
     ],
     providers: [
+        NewsItemService
     ],
     exports: [
         NewsItemComponent

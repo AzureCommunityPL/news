@@ -1,6 +1,6 @@
-export interface StorageConnectionDto {
-    sasToken: string;
-    tableName: string;
+export interface StorageTokenDto {
+    sas: string;
+    name: string;
 }
 
 export interface CommentDto {

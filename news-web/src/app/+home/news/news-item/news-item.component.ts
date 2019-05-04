@@ -1,51 +1,79 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 
 import { Subject } from 'rxjs';
-import { combineLatest } from 'rxjs/operators';
-
-import { NewsCommentModel } from '../news.model';
+import { takeUntil, combineLatest, switchMap, tap } from 'rxjs/operators';
 
 import { FacebookService } from '../../../_shared/facebook';
+import { SpinnerService } from '../../../_shared/spinner';
+
+import { NewsCommentModel } from '../news.model';
+import { NewsItemService } from './news-item.service';
+import { TableEntity, CommentModel } from './news-item.models';
 
 @Component({
   selector: 'app-news-item',
   templateUrl: './news-item.component.html',
   styleUrls: ['./news-item.component.scss']
 })
-export class NewsItemComponent {
+export class NewsItemComponent implements OnInit, OnDestroy {
   @Input() public title: string;
   @Input() public summary: string;
   @Input() public url: string;
   @Input() public partitioningKey: string;
   @Input() public rowKey: string;
 
-  public comments: NewsCommentModel[] = [
-    {
-      userId: 'user1',
-      // tslint:disable-next-line:max-line-length
-      comment: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum'
-    },
-    {
-      userId: 'user2',
-      title: 'Proposed title by user2',
-      // tslint:disable-next-line:max-line-length
-      comment: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum'
-    }];
+  public get spinnerName(): string {
+    return `${this.partitioningKey}.${this.rowKey}.spinner`;
+  }
 
-    private subject: Subject<void> = new Subject<void>();
+  private unsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(public  facebook: FacebookService) {
-      this.subject
+  public comments: CommentModel[] = [];
+  private subject: Subject<void> = new Subject<void>();
+  private commentSubject: Subject<TableEntity> = new Subject<TableEntity>();
+
+  constructor(
+    public facebook: FacebookService,
+    private service: NewsItemService,
+    private spinner: SpinnerService) {
+    this.subject
       .pipe(
-        combineLatest(this.facebook.user, (_, user) => {
-          console.log('inside combineLatest: ', user);
-          return user;
-        }))
-        .subscribe(x => console.log('sub: ', x));
-    }
+      takeUntil(this.unsubscribe),
+      combineLatest(this.facebook.user, (_, user) => {
+        console.log('inside combineLatest: ', user);
+        return user;
+      }))
+      .subscribe(x => console.log('sub: ', x));
 
-    public onAddComment(): void {
-      console.log('onAddComment called');
-      this.subject.next();
-    }
+    this.commentSubject
+      .pipe(
+        takeUntil(this.unsubscribe),
+        tap(x => this.spinner.show(this.spinnerName)),
+        switchMap(entity => this.service.getComments(entity))
+      )
+      .subscribe(x => {
+        // this.spinner.hide(this.spinnerName);
+        this.comments = x;
+      });
+  }
+
+  public ngOnInit(): void {
+    this.refresh();
+  }
+
+  public ngOnDestroy(): void {
+    this.unsubscribe.next();
+  }
+
+  public onAddComment(): void {
+    console.log('onAddComment called');
+    this.subject.next();
+  }
+
+  private refresh(): void {
+    this.commentSubject.next({
+      partitioningKey: this.partitioningKey,
+      rowKey: this.rowKey
+    });
+  }
 }

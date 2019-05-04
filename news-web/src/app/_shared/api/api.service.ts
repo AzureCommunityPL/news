@@ -6,16 +6,16 @@ import { Observable } from 'rxjs';
 import { CoreHttpClient } from '../http';
 import { environment } from '../../../environments/environment';
 
-import { StorageConnectionDto, CommentDto } from './api.dto';
+import { StorageTokenDto, CommentDto } from './api.dto';
 
 @Injectable()
 export class ApiService {
     constructor(private client: CoreHttpClient) {
     }
 
-    public getStorageConnection(): Observable<StorageConnectionDto> {
-        return this.client.get<StorageConnectionDto>(
-            `/api/GetStorageConnection`, this.getHttpHeaders());
+    public getStorageToken(tableName: string): Observable<StorageTokenDto> {
+        return this.client.get<StorageTokenDto>(
+            `/api/${tableName}/token`, this.getHttpHeaders());
     }
 
     public postComment(id: string, dto: CommentDto): Observable<void> {

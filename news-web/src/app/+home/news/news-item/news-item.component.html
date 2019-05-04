@@ -1,6 +1,8 @@
 <div class="row">
     <h5>
-        <a [href]="url">{{ title }}</a>
+        <span>
+            <a [href]="url">{{ title }}</a>
+        </span>
     </h5>
     <p> {{ summary }}</p>
 </div>
@@ -14,6 +16,9 @@
                             <i class="far fa-comment"></i>
                         </span>
                     </div>
+                    <div class="pull-left float-left">
+                            <ngx-spinner [attr.name]="spinnerName" [fullScreen]="false" type="ball-pulse" size="small"></ngx-spinner>
+                        </div>
                 </button>
                 <div *ngFor="let userComment of comments" class="row">
                     <div class="col-1">
@@ -25,7 +30,9 @@
                         </svg>
                     </div>
                     <div class="col">
-                        <p><strong>{{ userComment.title }}</strong></p>
+                        <p>
+                            <strong>{{ userComment.title }}</strong>
+                        </p>
                         <p>{{ userComment.comment }}</p>
                     </div>
                 </div>
