@@ -162,7 +162,7 @@ namespace NewsFunctions.Handlers
             log.LogInformation("Done");
             if (httpMethod == HttpOperation.Post)
             {
-                return  new OkObjectResult(body);
+                return  new OkObjectResult(comment);
             }
             return new OkResult();
         }
