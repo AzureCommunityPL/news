@@ -87,7 +87,7 @@ namespace NewsFunctions.Handlers
             {
                 return new UnauthorizedResult();
             }
-            catch (HttpRequestException ex) when (ex.Message.Contains("404"))
+            catch (HttpRequestException ex) when (ex.Message.Contains("404") || ex.Message.Contains("not found", StringComparison.InvariantCultureIgnoreCase))
             {
                 return new NotFoundResult();
             }
@@ -146,15 +146,16 @@ namespace NewsFunctions.Handlers
             switch (httpMethod)
             {
                 case HttpOperation.Put:
-                    log.LogInformation("Have chosen table operation Insert");
-                    operation = TableOperation.Insert(tableEntity);
-                    break;
-                case HttpOperation.Post:
                     log.LogInformation("Have chosen table operation Replace");
                     operation = TableOperation.Replace(tableEntity);
                     break;
+                case HttpOperation.Post:
+                    log.LogInformation("Have chosen table operation Insert");
+                    operation = TableOperation.Insert(tableEntity);
+                    break;
                 default:
-                    return new InternalServerErrorResult();
+                    // Unsupported HTTP verbs = HTTP 405 (method not allowed)
+                    return new StatusCodeResult(405);
             }
 
             await collector.ExecuteAsync(operation);
