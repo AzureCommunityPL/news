@@ -160,6 +160,10 @@ namespace NewsFunctions.Handlers
             await collector.ExecuteAsync(operation);
 
             log.LogInformation("Done");
+            if (httpMethod == HttpOperation.Post)
+            {
+                return  new OkObjectResult(comment);
+            }
             return new OkResult();
         }
     }
