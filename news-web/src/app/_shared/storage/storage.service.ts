@@ -52,7 +52,7 @@ export class StorageService {
                 {
                     key: 'PartitionKey',
                     expression: ODataFilterExpression.Equals,
-                    value: `${partitioningKey}-${rowKey}`
+                    value: `${partitioningKey}_${rowKey}`
                 }
             ]
         };

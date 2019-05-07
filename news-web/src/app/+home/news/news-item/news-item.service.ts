@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap, map, tap } from 'rxjs/operators';
 
 import { ApiService } from '../../../_shared/api';
 import { StorageService, CommentResponseDto } from '../../../_shared/storage';
@@ -21,11 +22,12 @@ export class NewsItemService {
         return this.apiService.getStorageToken('comments')
             .pipe(
                 switchMap(dto => this.storageService.getComments(dto, model.partitioningKey, model.rowKey)),
+                tap(x => console.log('storageService.getComments: ', x)),
                 map(response => this.mapAsCommentModel(response, model))
             );
     }
 
-    public postComment(model: CommentEditModel, user: FacebookUser): any {
+    public postComment(model: CommentEditModel, user: FacebookUser): Observable<HttpResponse<any>> {
         const id = `${model.partitioningKey}_${model.rowKey}`;
         const dto: CommentDto = {
             title: model.title,
@@ -36,11 +38,12 @@ export class NewsItemService {
     }
 
     private mapAsCommentModel(response: CommentResponseDto, model: TableEntity): CommentModel[] {
+        console.log('mapAsCommentModel: ', model);
         return response.value.map(c => ({
             partitioningKey: model.partitioningKey,
             rowKey: model.rowKey,
-            title: c.title,
-            comment: c.comment,
+            title: c.Title,
+            comment: c.Comment,
             userId: c.RowKey
         }));
     }

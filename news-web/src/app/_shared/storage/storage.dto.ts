@@ -12,8 +12,8 @@ export interface NewsResponseDto extends ODataResponseDto<NewsDto> {
 
 // Comments
 export interface CommentDto extends ODataValueDto {
-    title?: string;
-    comment: string;
+    Title?: string;
+    Comment: string;
 }
 
 export interface CommentResponseDto extends ODataResponseDto<CommentDto> {

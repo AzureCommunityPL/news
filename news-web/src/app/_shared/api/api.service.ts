@@ -19,11 +19,12 @@ export class ApiService {
             `/api/${tableName}/token`, this.getHttpHeaders());
     }
 
-    public postComment(id: string, dto: CommentDto, user: FacebookUser): Observable<HttpResponse<void>> {
+    public postComment(id: string, dto: CommentDto, user: FacebookUser): Observable<HttpResponse<any>> {
         const headers = this.getHttpHeaders()
             .append('access_token', user.token.value);
 
-        return this.client.post<HttpResponse<void>>(`/api/comment/${id}`, dto, headers);
+        return this.client.post<HttpResponse<any>>(
+            `/api/comment/${id}`, dto, headers);
     }
 
     private getHttpHeaders(): HttpHeaders {
