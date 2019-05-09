@@ -1,5 +1,3 @@
-
-
 trigger: none
 
 pr:
@@ -14,6 +12,18 @@ pool:
   vmImage: 'Ubuntu-16.04'
 
 steps:
+
+- task: Npm@1
+  displayName: 'Install JsonLint'
+  inputs:
+    command: 'custom'
+    customCommand: 'install jsonlint -g'
+  failOnStandardError: true
+
+- script: 'jsonlint your-template_-file.json'
+  workingDirectory: 'news-infrastructure'
+  displayName: 'validate JSON'
+
 
 - task: AzureCLI@1
   displayName: 'Get Azure Vars'
@@ -44,7 +54,7 @@ steps:
   workingDirectory: 'news-infrastructure'
   displayName: 'terraform plan'
 
-- task: AzureCLI@1  
+- task: AzureCLI@1
   displayName: 'Validate ARM templates'
   inputs:
     connectedServiceNameARM: 'AzureCommunityPL/news (d126dc91-4b54-4b49-857d-4e0c0f67fdfa)'
