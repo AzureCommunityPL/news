@@ -20,7 +20,7 @@ steps:
     customCommand: 'install jsonlint -g'
   failOnStandardError: true
 
-- script: 'jsonlint your-template_-file.json'
+- script: 'jsonlint logic-apps.json'
   workingDirectory: 'news-infrastructure'
   displayName: 'validate JSON'
 
