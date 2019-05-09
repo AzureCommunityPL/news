@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 
 import { SharedModule } from '../../../_shared';
 
+import { NewsItemModalModule } from './news-item-modal/news-item-modal.module';
+
 import { NewsItemComponent } from './news-item.component';
 import { NewsItemService } from './news-item.service';
 
@@ -12,7 +14,8 @@ import { NewsItemService } from './news-item.service';
     ],
     imports: [
         CommonModule,
-        SharedModule
+        SharedModule,
+        NewsItemModalModule
     ],
     providers: [
         NewsItemService

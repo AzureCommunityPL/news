@@ -10,7 +10,24 @@
     <div class="col accordion-col">
         <accordion>
             <accordion-group [panelClass]="customClass">
-                <button class="btn btn-block btn-link clearfix" accordion-heading>
+                <div class="accordion-header" accordion-heading>
+                    <div class="pull-left float-left">
+                        <span>{{ comments.length }}
+                            <i class="far fa-comments"></i>
+                        </span>
+                    </div>
+
+                    <button (click)="onAddComment()" *ngIf="facebook.user | async"
+                        class="btn btn-light float-right pull-right" tooltip="Create comment">
+                            <i class="far fa-comment"></i>
+                    </button>
+
+                    <button (click)="onAddComment()" *ngIf="facebook.user | async"
+                        class="btn btn-light float-right pull-right" tooltip="Edit comment">
+                            <i class="far fa-comment-dots"></i>
+                    </button>
+                </div>
+                <!-- <button class="btn btn-block btn-link clearfix" accordion-heading>
                     <div class="pull-left float-left">
                         <span>{{ comments.length }}
                             <i class="far fa-comment"></i>
@@ -19,7 +36,12 @@
                     <div class="pull-left float-left">
                         <ngx-spinner [attr.name]="spinnerName" [fullScreen]="false" type="ball-pulse" size="small"></ngx-spinner>
                     </div>
-                </button>
+                </button> -->
+                <!-- <div class="row">
+                    <button (click)="onAddComment()" class="btn btn-light float-right" tooltip="Create comment">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div> -->
                 <div *ngFor="let userComment of comments" class="row">
                     <div class="col-1">
                         <img class="user-avatar" [src]="getUserPictureUrl(userComment)">
@@ -32,7 +54,7 @@
                     </div>
                 </div>
             </accordion-group>
-            <accordion-group *ngIf="facebook.user | async">
+            <!-- <accordion-group *ngIf="facebook.user | async">
                 <button class="btn btn-block btn-link clearfix" tooltip="Add comment" accordion-heading>
                     <div class="pull-left float-left">
                         <i class="far fa-comment"></i>
@@ -60,7 +82,7 @@
                         </form>
                     </div>
                 </div>
-            </accordion-group>
+            </accordion-group> -->
         </accordion>
     </div>
 </div>

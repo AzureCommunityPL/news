@@ -1,0 +1,25 @@
+<div class="modal-header">
+    <h4>omg!</h4>
+</div>
+<div class="modal-body">
+    <div class="col">
+        <form>
+            <div class="form-group">
+                <label for="titleInput">Proposed title</label>
+                <input type="text" [(ngModel)]="model.title" [name]="model.partitioningKey + model.rowKey +'-title'" class="form-control"
+                    id="titleInput" aria-describedby="titleHelp" placeholder="Enter proposed title">
+                <small id="titleHelp" class="form-text text-muted">If you think this post deserves a better title, propose one.</small>
+                <label for="commentInput">Comment</label>
+                <textarea [(ngModel)]="model.comment" [name]="model.partitioningKey + model.rowKey +'-comment'" class="form-control"
+                    id="commentInout" aria-describedby="commentHelp" placeholder="Enter comment"></textarea>
+                <small id="commentHelp" class="form-text text-muted">Please share your comment (required)</small>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button (click)="subject.next(model)"
+        class="btn btn-light float-right" tooltip="Create comment">
+        <i class="fas fa-paper-plane"></i>
+    </button>
+</div>

@@ -9,6 +9,7 @@ import { AccordionModule as NgxAccordion } from 'ngx-bootstrap/accordion';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { ToastrModule as NgxToastrModule } from 'ngx-toastr';
 import { TooltipModule as NgxTooltip } from 'ngx-bootstrap/tooltip';
+import { ModalModule as NgxModalModule } from 'ngx-bootstrap/modal';
 
 const NgModules = [
   HttpClientModule,
@@ -27,7 +28,8 @@ const NgxModules = [
   NgxSpinnerModule,
   NgxToastrModule.forRoot(),
   NgxAccordion.forRoot(),
-  NgxTooltip.forRoot()
+  NgxTooltip.forRoot(),
+  NgxModalModule.forRoot()
 ];
 
 const NgxExports = [
@@ -35,7 +37,8 @@ const NgxExports = [
   NgxSpinnerModule,
   NgxToastrModule,
   NgxAccordion,
-  NgxTooltip
+  NgxTooltip,
+  NgxModalModule
 ];
 
 // clients

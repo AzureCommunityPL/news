@@ -3,6 +3,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 
 import { Subject } from 'rxjs';
 import { takeUntil, combineLatest, withLatestFrom, switchMap, tap } from 'rxjs/operators';
+import { BsModalService } from 'ngx-bootstrap/modal';
 
 import { FacebookService } from '../../../_shared/facebook';
 import { SpinnerService } from '../../../_shared/spinner';
@@ -13,6 +14,8 @@ import { TableEntity, CommentModel, CommentEditModel } from './news-item.models'
 import { CoreHttpClient } from '../../../_shared/http/core-http.client';
 import { HttpHeaders } from '@angular/common/http';
 import { FacebookUser } from '../../../_shared/facebook';
+import { NewsItemModalComponent } from './news-item-modal/news-item-modal.component';
+import { ModalOptions } from 'ngx-bootstrap/modal/modal-options.class';
 
 @Component({
   selector: 'app-news-item',
@@ -43,22 +46,27 @@ export class NewsItemComponent implements OnInit, OnDestroy {
     private service: NewsItemService,
     private spinner: SpinnerService,
     private client: CoreHttpClient,
-    private ngClient: HttpClient) {
+    private modal: BsModalService) {
 
     this.subject
       .pipe(
-      takeUntil(this.unsubscribe),
-      withLatestFrom(this.facebook.user),
-      switchMap((input: [CommentEditModel, FacebookUser]) => {
-        const id = `${this.partitioningKey}_${this.rowKey}`;
-        const headers = new HttpHeaders()
-          .append('Content-Type', 'application/json')
-          .append('access_token', input[1].token.value);
-        return this.ngClient.post<any>(`/api/comment/${id}`, input[0], { headers });
-      }))
+        takeUntil(this.unsubscribe)
+      )
       .subscribe(x => {
-        this.refresh();
-      }, (e) => console.error('Failed to POST comment: ', e));
+        const model: CommentEditModel = {
+          partitioningKey: this.partitioningKey,
+          rowKey: this.rowKey,
+          title: undefined,
+          comment: undefined
+        };
+
+        const initialState = {
+          model,
+          parent: this
+        };
+
+        this.modal.show(NewsItemModalComponent, { initialState });
+      });
 
     this.commentSubject
       .pipe(
@@ -87,7 +95,7 @@ export class NewsItemComponent implements OnInit, OnDestroy {
     return `https://graph.facebook.com/${comment.userId}/picture?type=normal&height=36`;
   }
 
-  private refresh(): void {
+  public refresh(): void {
     this.resetEditModel();
 
     this.commentSubject.next({
