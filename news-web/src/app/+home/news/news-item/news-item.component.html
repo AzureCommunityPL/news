@@ -12,7 +12,7 @@
             <accordion-group [panelClass]="customClass">
                 <div class="accordion-header" accordion-heading>
                     <div class="pull-left float-left">
-                        <span>{{ (comments | async).length }}
+                        <span>{{ (comments | async)?.length }}
                             <i class="far fa-comments"></i>
                         </span>
                     </div>
@@ -22,7 +22,7 @@
                             <i class="far fa-comment"></i>
                     </button>
 
-                    <button (click)="onAddComment()" *ngIf="canEditComment | async"
+                    <button (click)="onEditComment()" *ngIf="canEditComment | async"
                         class="btn btn-light float-right pull-right" tooltip="Edit comment">
                             <i class="far fa-comment-dots"></i>
                     </button>

@@ -27,6 +27,14 @@ export class ApiService {
             `/api/comment/${id}`, dto, headers);
     }
 
+    public putComment(id: string, dto: CommentDto, user: FacebookUser): Observable<HttpResponse<any>> {
+        const headers = this.getHttpHeaders()
+            .append('access_token', user.token.value);
+
+        return this.client.put<HttpResponse<any>>(
+            `/api/comment/${id}`, dto, headers);
+    }
+
     private getHttpHeaders(): HttpHeaders {
         const headers = new HttpHeaders()
             .append('Accept', 'application/json');

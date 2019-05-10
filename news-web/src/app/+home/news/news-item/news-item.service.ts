@@ -22,7 +22,6 @@ export class NewsItemService {
         return this.apiService.getStorageToken('comments')
             .pipe(
                 switchMap(dto => this.storageService.getComments(dto, model.partitioningKey, model.rowKey)),
-                tap(x => console.log('storageService.getComments: ', x)),
                 map(response => this.mapAsCommentModel(response, model))
             );
     }
@@ -37,8 +36,17 @@ export class NewsItemService {
         return this.apiService.postComment(id, dto, user);
     }
 
+    public putComment(model: CommentEditModel, user: FacebookUser): Observable<HttpResponse<any>> {
+        const id = `${model.partitioningKey}_${model.rowKey}`;
+        const dto: CommentDto = {
+            title: model.title,
+            comment: model.comment
+        };
+
+        return this.apiService.putComment(id, dto, user);
+    }
+
     private mapAsCommentModel(response: CommentResponseDto, model: TableEntity): CommentModel[] {
-        console.log('mapAsCommentModel: ', model);
         return response.value.map(c => ({
             partitioningKey: model.partitioningKey,
             rowKey: model.rowKey,

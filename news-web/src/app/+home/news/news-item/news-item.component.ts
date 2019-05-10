@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 
-import { Subject } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 import { takeUntil, combineLatest, withLatestFrom, switchMap, tap, map, startWith } from 'rxjs/operators';
 import { BsModalService } from 'ngx-bootstrap/modal';
 
@@ -41,7 +41,8 @@ export class NewsItemComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject<void>();
 
   public comments: Subject<CommentModel[]> = new Subject<CommentModel[]>();
-  private subject: Subject<CommentEditModel> = new Subject<CommentEditModel>();
+  private addSubject: Subject<CommentEditModel> = new Subject<CommentEditModel>();
+  private editSubject: Subject<void> = new Subject<void>();
   private commentSubject: Subject<TableEntity> = new Subject<TableEntity>();
 
   constructor(
@@ -51,38 +52,40 @@ export class NewsItemComponent implements OnInit, OnDestroy {
     private client: CoreHttpClient,
     private modal: BsModalService) {
 
-    this.canAddComment = this.comments
-      .pipe(
+    this.canAddComment = this.comments.pipe(
+      takeUntil(this.unsubscribe),
       combineLatest(this.facebook.user),
       map((input: [CommentModel[], FacebookUser]) => !!!input[0].find(x => x.userId === input[1].id)),
       startWith(false)
-      );
+    );
 
-    this.canEditComment = this.comments
-      .pipe(
+    this.canEditComment = this.comments.pipe(
+      takeUntil(this.unsubscribe),
       combineLatest(this.facebook.user),
       map((input: [CommentModel[], FacebookUser]) => !!input[0].find(x => x.userId === input[1].id)),
       startWith(false)
-      );
+    );
 
-    this.subject
-      .pipe(
+    this.editSubject.pipe(
+      takeUntil(this.unsubscribe),
+      withLatestFrom(this.comments, this.facebook.user),
+      map(input => {
+        const cmt = input[1].find(x => x.userId === input[2].id);
+        return this.getEditModel(cmt.title, cmt.comment);
+      })
+    ).subscribe(this.addSubject);
+
+    this.addSubject.pipe(
       takeUntil(this.unsubscribe)
-      )
-      .subscribe(x => {
-        const model: CommentEditModel = {
-          partitioningKey: this.partitioningKey,
-          rowKey: this.rowKey,
-          title: undefined,
-          comment: undefined
-        };
-
-        const initialState = {
+    )
+    .subscribe(x => {
+      const model = x ? x : this.getEditModel(undefined, undefined);
+      const initialState = {
           model,
           parent: this
-        };
+      };
 
-        this.modal.show(NewsItemModalComponent, { initialState });
+      this.modal.show(NewsItemModalComponent, { initialState });
       });
 
     this.commentSubject
@@ -95,7 +98,6 @@ export class NewsItemComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.refresh();
-    this.resetEditModel();
   }
 
   public ngOnDestroy(): void {
@@ -103,7 +105,11 @@ export class NewsItemComponent implements OnInit, OnDestroy {
   }
 
   public onAddComment(): void {
-    this.subject.next(this.edit);
+    this.addSubject.next(this.getEditModel(undefined, undefined));
+  }
+
+  public onEditComment(): void {
+    this.editSubject.next();
   }
 
   public getUserPictureUrl(comment: CommentModel): string {
@@ -111,20 +117,18 @@ export class NewsItemComponent implements OnInit, OnDestroy {
   }
 
   public refresh(): void {
-    this.resetEditModel();
-
     this.commentSubject.next({
       partitioningKey: this.partitioningKey,
       rowKey: this.rowKey
     });
   }
 
-  private resetEditModel(): void {
-    this.edit = {
+  private getEditModel(title?: string, comment?: string): CommentEditModel {
+    return {
       partitioningKey: this.partitioningKey,
       rowKey: this.rowKey,
-      title: null,
-      comment: null
+      title,
+      comment
     };
   }
 }

@@ -126,11 +126,11 @@ export class CoreHttpClient {
    * @param optionsArgs Optional request argss
    * @return An Observable stream containing the deserialized response object(s)
    */
-  public put<T>(url: string, body: any): Observable<T> {
+  public put<T>(url: string, body: any, httpHeaders?: HttpHeaders): Observable<T> {
     this.requestStartedSubject.next();
 
     const observable: Observable<T> = this.client
-      .put(url, body, { responseType: 'json' })
+      .put(url, body, { responseType: 'json', headers: httpHeaders })
       .pipe(
         catchError((error: HttpErrorResponse) => this.handleError(error)),
         finalize<T>(() => this.requestFinishedSubject.next())

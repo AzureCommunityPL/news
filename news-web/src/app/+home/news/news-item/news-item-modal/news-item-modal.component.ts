@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { takeUntil, withLatestFrom, switchMap } from 'rxjs/operators';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 
+import { NewsItemModalMode } from './news-item-modal.models';
 import { CommentEditModel } from '../news-item.models';
 import { NewsItemService } from '../news-item.service';
 import { NewsItemComponent } from '../news-item.component';
@@ -17,23 +18,26 @@ import { ToastrService } from 'src/app/_shared/toastr/toastr.service';
   styleUrls: ['./news-item-modal.component.scss']
 })
 export class NewsItemModalComponent implements OnInit, OnDestroy {
-    public model: CommentEditModel;
-    public parent: NewsItemComponent;
+  public model: CommentEditModel;
+  public parent: NewsItemComponent;
 
-    public subject: Subject<CommentEditModel> = new Subject<CommentEditModel>();
-    private unsubscribe: Subject<void> = new Subject<void>();
+  public subject: Subject<CommentEditModel> = new Subject<CommentEditModel>();
+  private unsubscribe: Subject<void> = new Subject<void>();
+  private mode: NewsItemModalMode;
 
-    constructor(
-      private modal: BsModalRef,
-      private facebook: FacebookService,
-      private service: NewsItemService,
-      private toastr: ToastrService) {
-
- this.subject
-      .pipe(
-        takeUntil(this.unsubscribe),
-        withLatestFrom(this.facebook.user),
-        switchMap((input) => this.service.postComment(input[0], input[1])))
+  constructor(
+    private modal: BsModalRef,
+    private facebook: FacebookService,
+    private service: NewsItemService,
+    private toastr: ToastrService) {
+    this.subject.pipe(
+      takeUntil(this.unsubscribe),
+      withLatestFrom(this.facebook.user),
+      switchMap((input) => {
+        return this.mode === NewsItemModalMode.Create
+          ? this.service.postComment(input[0], input[1])
+          : this.service.putComment(input[0], input[1]);
+      }))
       .subscribe(x => {
         this.toastr.success('Comment sent successfully', 'Success');
         this.parent.refresh();
@@ -44,12 +48,13 @@ export class NewsItemModalComponent implements OnInit, OnDestroy {
         this.modal.hide();
       });
 
-    }
+  }
 
-    public ngOnInit(): void {
-    }
+  public ngOnInit(): void {
+    this.mode = this.model.comment ? NewsItemModalMode.Edit : NewsItemModalMode.Create;
+  }
 
-    public ngOnDestroy(): void {
-      this.unsubscribe.next();
-    }
+  public ngOnDestroy(): void {
+    this.unsubscribe.next();
+  }
 }
