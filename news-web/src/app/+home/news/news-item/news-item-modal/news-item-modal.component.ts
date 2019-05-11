@@ -1,10 +1,13 @@
-// ng
+// Ng
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
+// 3rdParty
 import { Subject } from 'rxjs';
 import { takeUntil, withLatestFrom, switchMap } from 'rxjs/operators';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 
+// Local
 import { NewsItemModalMode } from './news-item-modal.models';
 import { CommentEditModel } from '../news-item.models';
 import { NewsItemService } from '../news-item.service';
@@ -20,16 +23,21 @@ import { ToastrService } from 'src/app/_shared/toastr/toastr.service';
 export class NewsItemModalComponent implements OnInit, OnDestroy {
   public model: CommentEditModel;
   public parent: NewsItemComponent;
+  public get minCommentLength(): number { return 5; }
+  public get minTitleLength(): number { return 5; }
 
   public subject: Subject<CommentEditModel> = new Subject<CommentEditModel>();
   private unsubscribe: Subject<void> = new Subject<void>();
   public mode: NewsItemModalMode;
+  public userForm: FormGroup;
 
   constructor(
     private modal: BsModalRef,
     private facebook: FacebookService,
     private service: NewsItemService,
-    private toastr: ToastrService) {
+    private toastr: ToastrService,
+    private fb: FormBuilder) {
+
     this.subject.pipe(
       takeUntil(this.unsubscribe),
       withLatestFrom(this.facebook.user),
@@ -52,6 +60,21 @@ export class NewsItemModalComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.mode = this.model.comment ? NewsItemModalMode.Edit : NewsItemModalMode.Create;
+
+    this.userForm = this.fb.group({
+      title: [this.model.title, [Validators.minLength(this.minTitleLength)]],
+      comment: [this.model.comment, [Validators.required, Validators.minLength(this.minCommentLength)]]
+    });
+
+  }
+
+  public sendComment(): void {
+    this.subject.next({
+      title: this.userForm.value.title,
+      comment: this.userForm.value.comment,
+      partitioningKey: this.model.partitioningKey,
+      rowKey: this.model.rowKey
+    });
   }
 
   public ngOnDestroy(): void {

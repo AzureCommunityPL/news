@@ -42,6 +42,10 @@
                         <p>{{ userComment.comment }}</p>
                     </div>
                 </div>
+
+                <div *ngIf="(comments | async)?.length === 0">
+                    <p>There are no comments yet.</p>
+                </div>
             </accordion-group>
         </accordion>
     </div>

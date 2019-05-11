@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 import { BsDatepickerModule as NgxDatePickerModule } from 'ngx-bootstrap/datepicker';
@@ -14,11 +14,13 @@ import { ModalModule as NgxModalModule } from 'ngx-bootstrap/modal';
 const NgModules = [
   HttpClientModule,
   FormsModule,
+  ReactiveFormsModule,
   CommonModule
 ];
 
 const NgExports = [
   FormsModule,
+  ReactiveFormsModule,
   CommonModule,
   BrowserAnimationsModule
 ];
