@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h4>omg!</h4>
+    <h4>{{ mode | newsItemModalToString }}</h4>
 </div>
 <div class="modal-body">
     <div class="col">
@@ -19,7 +19,7 @@
 </div>
 <div class="modal-footer">
     <button (click)="subject.next(model)"
-        class="btn btn-light float-right" tooltip="Create comment">
+        class="btn btn-light float-right" [tooltip]="mode | newsItemModalBtnToString">
         <i class="fas fa-paper-plane"></i>
     </button>
 </div>

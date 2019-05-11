@@ -23,7 +23,7 @@ export class NewsItemModalComponent implements OnInit, OnDestroy {
 
   public subject: Subject<CommentEditModel> = new Subject<CommentEditModel>();
   private unsubscribe: Subject<void> = new Subject<void>();
-  private mode: NewsItemModalMode;
+  public mode: NewsItemModalMode;
 
   constructor(
     private modal: BsModalRef,
