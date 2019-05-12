@@ -1,0 +1,38 @@
+<div class="modal-header">
+    <h4>{{ mode | newsItemModalToString }}</h4>
+</div>
+<div class="modal-body">
+    <div class="col">
+        <form [formGroup]="userForm">
+            <div class="form-group">
+                <!--Title-->
+                <label for="titleInput">Proposed title</label>
+                <input type="text" formControlName="title" [name]="model.partitioningKey + model.rowKey +'-title'" class="form-control" [ngClass]="{ 
+                    'is-invalid': userForm?.get('title').hasError('minlength')
+                }" id="titleInput" aria-describedby="titleHelp" placeholder="Enter proposed title">
+                <small id="titleHelp" class="form-text text-muted">If you think this post deserves a better title, propose one. (optional)</small>
+                <div *ngIf="userForm?.get('title').hasError('minlength')" class="invalid-feedback">
+                        Title must be at least {{ minTitleLength }} characters long
+                </div>
+
+                <!--Comment-->
+                <label for="commentInput">Comment</label>
+                <textarea formControlName="comment" [name]="model.partitioningKey + model.rowKey +'-comment'" class="form-control" [ngClass]="{ 
+                        'is-invalid': userForm?.get('comment').hasError('required') || userForm?.get('comment').hasError('minlength')
+                    }" id="commentInout" aria-describedby="commentHelp" placeholder="Enter comment"></textarea>
+                <small id="commentHelp" class="form-text text-muted">Please share your comment (required)</small>
+                <div *ngIf="userForm?.get('comment').hasError('required')" class="invalid-feedback">
+                    Comment is required
+                </div>
+                <div *ngIf="userForm?.get('comment').hasError('minlength')" class="invalid-feedback">
+                    Comment must be at least {{ minCommentLength }} characters long
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button (click)="sendComment()" [disabled]="userForm?.invalid" class="btn btn-light float-right" [tooltip]="mode | newsItemModalBtnToString">
+        <i class="fas fa-paper-plane"></i>
+    </button>
+</div>

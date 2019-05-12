@@ -1,15 +1,20 @@
+import { ODataResponseDto, ODataValueDto } from '../odata';
 
-export interface NewsDto {
-    'odata.etag': string;
-    PartitionKey: string;
-    RowKey: string;
-    TimeStamp: Date;
+// News
+export interface NewsDto extends ODataValueDto {
     Title: string;
     Summary: string;
     Url: string;
 }
 
-export interface NewsResponseDto {
-    'odata.metadata': string;
-    value: NewsDto[];
+export interface NewsResponseDto extends ODataResponseDto<NewsDto> {
+}
+
+// Comments
+export interface CommentDto extends ODataValueDto {
+    Title?: string;
+    Comment: string;
+}
+
+export interface CommentResponseDto extends ODataResponseDto<CommentDto> {
 }

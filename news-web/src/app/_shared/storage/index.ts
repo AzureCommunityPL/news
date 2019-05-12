@@ -1,2 +1,2 @@
 export { StorageService } from './storage.service';
-export { NewsResponseDto } from './storage.dto';
+export { NewsResponseDto, CommentResponseDto } from './storage.dto';

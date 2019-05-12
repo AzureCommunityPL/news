@@ -11,6 +11,7 @@ import { NewsModel } from './news.model';
 @Injectable()
 export class NewsService {
     public unsubscribe: Subject<void> = new Subject<void>();
+    private readonly tableName: string = 'news';
 
     constructor(
         private api: ApiService,
@@ -18,13 +19,13 @@ export class NewsService {
     }
 
     public getLatestNewsDate(): Observable<Date> {
-        return this.api.getStorageConnection()
+        return this.api.getStorageToken(this.tableName)
         .pipe(
             switchMap(x => this.odata.getLatestNewsDate(x)));
     }
 
     public getNews(ticks: number): Observable<NewsModel[]> {
-        return this.api.getStorageConnection()
+        return this.api.getStorageToken(this.tableName)
             .pipe(
                 switchMap(x => this.odata.getNews(x, ticks)),
                 map(x => this.mapAsNewsModel(x)));

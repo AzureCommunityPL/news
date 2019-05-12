@@ -1,27 +1,46 @@
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 import { BsDatepickerModule as NgxDatePickerModule } from 'ngx-bootstrap/datepicker';
+import { AccordionModule as NgxAccordion } from 'ngx-bootstrap/accordion';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { ToastrModule as NgxToastrModule } from 'ngx-toastr';
+import { TooltipModule as NgxTooltip } from 'ngx-bootstrap/tooltip';
+import { ModalModule as NgxModalModule } from 'ngx-bootstrap/modal';
+
+const NgModules = [
+  HttpClientModule,
+  FormsModule,
+  ReactiveFormsModule,
+  CommonModule
+];
 
 const NgExports = [
   FormsModule,
+  ReactiveFormsModule,
+  CommonModule,
   BrowserAnimationsModule
 ];
 
 const NgxModules = [
   NgxDatePickerModule.forRoot(),
   NgxSpinnerModule,
-  NgxToastrModule.forRoot()
+  NgxToastrModule.forRoot(),
+  NgxAccordion.forRoot(),
+  NgxTooltip.forRoot(),
+  NgxModalModule.forRoot()
 ];
 
 const NgxExports = [
   NgxDatePickerModule,
   NgxSpinnerModule,
-  NgxToastrModule
+  NgxToastrModule,
+  NgxAccordion,
+  NgxTooltip,
+  NgxModalModule
 ];
 
 // clients
@@ -51,10 +70,6 @@ const Services = [
   ToastrService
 ];
 
-const NgModules = [
-  HttpClientModule,
-  FormsModule
-];
 
 @NgModule({
   imports: [

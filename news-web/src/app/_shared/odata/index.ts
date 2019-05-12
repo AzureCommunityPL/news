@@ -1,2 +1,8 @@
 export { ODataClient } from './odata.client';
-export { ODataFilter, ODataFilterExpression, ODataQuery } from './odata.models';
+export {
+    ODataFilter,
+    ODataFilterExpression,
+    ODataQuery,
+    ODataResponseDto,
+    ODataValueDto
+} from './odata.models';

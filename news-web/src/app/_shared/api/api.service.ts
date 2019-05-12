@@ -1,25 +1,38 @@
 import { Injectable } from '@angular/core';
-import { HttpHeaders } from '@angular/common/http';
+import { HttpHeaders, HttpResponse } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
 import { CoreHttpClient } from '../http';
 import { environment } from '../../../environments/environment';
 
-import { StorageConnectionDto } from './api.dto';
+import { StorageTokenDto, CommentDto } from './api.dto';
+import { FacebookUser } from '../facebook';
 
 @Injectable()
 export class ApiService {
     constructor(private client: CoreHttpClient) {
     }
 
-    public getStorageConnection(): Observable<StorageConnectionDto> {
-        return this.client.get<StorageConnectionDto>(
-            this.getRequestUri(), this.getHttpHeaders());
+    public getStorageToken(tableName: string): Observable<StorageTokenDto> {
+        return this.client.get<StorageTokenDto>(
+            `/api/${tableName}/token`, this.getHttpHeaders());
     }
 
-    private getRequestUri(): string {
-        return `/api/GetStorageConnection`;
+    public postComment(id: string, dto: CommentDto, user: FacebookUser): Observable<HttpResponse<any>> {
+        const headers = this.getHttpHeaders()
+            .append('access_token', user.token.value);
+
+        return this.client.post<HttpResponse<any>>(
+            `/api/comment/${id}`, dto, headers);
+    }
+
+    public putComment(id: string, dto: CommentDto, user: FacebookUser): Observable<HttpResponse<any>> {
+        const headers = this.getHttpHeaders()
+            .append('access_token', user.token.value);
+
+        return this.client.put<HttpResponse<any>>(
+            `/api/comment/${id}`, dto, headers);
     }
 
     private getHttpHeaders(): HttpHeaders {
