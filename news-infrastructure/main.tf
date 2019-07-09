@@ -180,9 +180,9 @@ resource "azurerm_function_app" "functions" {
   }
 
   app_settings {
-    "APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.appinsights.instrumentation_key}"
-    "AccountStorage-Name"            = "${azurerm_storage_account.storage.name}"
-    "WEBSITE_RUN_FROM_PACKAGE"       = "1"
+    APPINSIGHTS_INSTRUMENTATIONKEY = "${azurerm_application_insights.appinsights.instrumentation_key}"
+    AccountStorage-Name            = "${azurerm_storage_account.storage.name}"
+    WEBSITE_RUN_FROM_PACKAGE       = "1"
   }
 }
 
