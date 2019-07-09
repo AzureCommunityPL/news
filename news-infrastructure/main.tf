@@ -14,7 +14,7 @@ variable "zone" {
 }
 
 variable "cf_account_id" {
-  "default" = "d5b58a2229c11224b000073d2b8e33d3"
+  default = "d5b58a2229c11224b000073d2b8e33d3"
   type      = "string"
 }
 
