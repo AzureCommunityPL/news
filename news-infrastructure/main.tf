@@ -173,13 +173,13 @@ resource "azurerm_function_app" "functions" {
   storage_connection_string = "${azurerm_storage_account.storage.primary_connection_string}"
   version                   = "~2"
 
-  connection_string = {
+  connection_string {
       name  = "AccountStorage-Conn"
       type  = "Custom"
       value = "${azurerm_storage_account.storage.primary_connection_string}"
   }
 
-  app_settings = {
+  app_settings {
     "APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.appinsights.instrumentation_key}"
     "AccountStorage-Name"            = "${azurerm_storage_account.storage.name}"
     "WEBSITE_RUN_FROM_PACKAGE"       = "1"
