@@ -14,7 +14,7 @@ variable "zone" {
 }
 
 variable "cf_account_id" {
-  "default" = "d5b58a2229c11224b000073d2b8e33d3"
+  default = "d5b58a2229c11224b000073d2b8e33d3"
   type      = "string"
 }
 
@@ -65,7 +65,7 @@ resource "cloudflare_record" "domain" {
 }
 
 resource "null_resource" "cloudflare_worker" {
-  triggers {
+  triggers = {
     build_number = "${timestamp()}"
   }
 
@@ -88,7 +88,7 @@ resource "cloudflare_worker_route" "route" {
 }
 
 resource "null_resource" "cloudflare_kv_settings" {
-  triggers {
+  triggers = {
     build_number = "${timestamp()}"
   }
 
@@ -173,18 +173,16 @@ resource "azurerm_function_app" "functions" {
   storage_connection_string = "${azurerm_storage_account.storage.primary_connection_string}"
   version                   = "~2"
 
-  connection_string = [
-    {
+  connection_string {
       name  = "AccountStorage-Conn"
       type  = "Custom"
       value = "${azurerm_storage_account.storage.primary_connection_string}"
-    },
-  ]
+  }
 
   app_settings = {
-    "APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.appinsights.instrumentation_key}"
-    "AccountStorage-Name"            = "${azurerm_storage_account.storage.name}"
-    "WEBSITE_RUN_FROM_PACKAGE"       = "1"
+    APPINSIGHTS_INSTRUMENTATIONKEY = "${azurerm_application_insights.appinsights.instrumentation_key}"
+    AccountStorage-Name            = "${azurerm_storage_account.storage.name}"
+    WEBSITE_RUN_FROM_PACKAGE       = "1"
   }
 }
 
@@ -195,8 +193,8 @@ resource "azurerm_template_deployment" "function-settings" {
 
   template_body = "${file("function-settings.json")}"
 
-  parameters {
-    "name" = "${azurerm_function_app.functions.name}"
+  parameters = {
+    name = "${azurerm_function_app.functions.name}"
   }
 
   depends_on = [
@@ -211,13 +209,13 @@ resource "azurerm_template_deployment" "logicapp" {
 
   template_body = "${file("logic-apps.json")}"
 
-  parameters {
-    "queueApiConnectionName" = "azurequeues"
-    "storageAccountName"     = "${azurerm_storage_account.storage.name}"
-    "storageAccountKey"      = "${azurerm_storage_account.storage.primary_access_key}"
-    "rssApiConnectionName"   = "rss"
-    "logicAppName"           = "${terraform.workspace}-news-la"
-    "feedUrlList"            = "https://azurecomcdn.azureedge.net/en-us/blog/feed/"
+  parameters = {
+    queueApiConnectionName = "azurequeues"
+    storageAccountName     = "${azurerm_storage_account.storage.name}"
+    storageAccountKey      = "${azurerm_storage_account.storage.primary_access_key}"
+    rssApiConnectionName   = "rss"
+    logicAppName           = "${terraform.workspace}-news-la"
+    feedUrlList            = "https://azurecomcdn.azureedge.net/en-us/blog/feed/"
   }
 
   depends_on = [
