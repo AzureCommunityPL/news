@@ -193,7 +193,7 @@ resource "azurerm_template_deployment" "function-settings" {
 
   template_body = "${file("function-settings.json")}"
 
-  parameters {
+  parameters = {
     name = "${azurerm_function_app.functions.name}"
   }
 
@@ -209,7 +209,7 @@ resource "azurerm_template_deployment" "logicapp" {
 
   template_body = "${file("logic-apps.json")}"
 
-  parameters {
+  parameters = {
     queueApiConnectionName = "azurequeues"
     storageAccountName     = "${azurerm_storage_account.storage.name}"
     storageAccountKey      = "${azurerm_storage_account.storage.primary_access_key}"
