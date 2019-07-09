@@ -196,7 +196,7 @@ resource "azurerm_template_deployment" "function-settings" {
   template_body = "${file("function-settings.json")}"
 
   parameters {
-    "name" = "${azurerm_function_app.functions.name}"
+    name = "${azurerm_function_app.functions.name}"
   }
 
   depends_on = [
@@ -212,12 +212,12 @@ resource "azurerm_template_deployment" "logicapp" {
   template_body = "${file("logic-apps.json")}"
 
   parameters {
-    "queueApiConnectionName" = "azurequeues"
-    "storageAccountName"     = "${azurerm_storage_account.storage.name}"
-    "storageAccountKey"      = "${azurerm_storage_account.storage.primary_access_key}"
-    "rssApiConnectionName"   = "rss"
-    "logicAppName"           = "${terraform.workspace}-news-la"
-    "feedUrlList"            = "https://azurecomcdn.azureedge.net/en-us/blog/feed/"
+    queueApiConnectionName = "azurequeues"
+    storageAccountName     = "${azurerm_storage_account.storage.name}"
+    storageAccountKey      = "${azurerm_storage_account.storage.primary_access_key}"
+    rssApiConnectionName   = "rss"
+    logicAppName           = "${terraform.workspace}-news-la"
+    feedUrlList            = "https://azurecomcdn.azureedge.net/en-us/blog/feed/"
   }
 
   depends_on = [
