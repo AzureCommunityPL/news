@@ -65,7 +65,7 @@ resource "cloudflare_record" "domain" {
 }
 
 resource "null_resource" "cloudflare_worker" {
-  triggers {
+  triggers = {
     build_number = "${timestamp()}"
   }
 
@@ -88,7 +88,7 @@ resource "cloudflare_worker_route" "route" {
 }
 
 resource "null_resource" "cloudflare_kv_settings" {
-  triggers {
+  triggers = {
     build_number = "${timestamp()}"
   }
 
